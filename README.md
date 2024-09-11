@@ -6,6 +6,15 @@ Plataforma: Udemy
 
 Instrutor: Jose Carlos Macoratti
 
+## Plugins VSCode
+
+[C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit)
+
+[IntelliCode for C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.vscodeintellicode-csharp)
+
+
+
+
 ## Conceitos gerais
 
 ### API - Application Programming Interface
@@ -76,3 +85,4 @@ Os serviços são instânciados em cada solicitação/request. Se durante um req
 
 3) Singleton
 O serviço é instânciado apenas uma vez durante a vida útil do aplicativo.
+
