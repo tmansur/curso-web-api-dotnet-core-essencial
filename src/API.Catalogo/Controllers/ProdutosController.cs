@@ -1,6 +1,7 @@
 ﻿using API.Catalogo.Context;
 using API.Catalogo.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Catalogo.Controllers
 {
@@ -61,6 +62,20 @@ namespace API.Catalogo.Controllers
 
       //Retorna 201 e os dados do produto criado, para isso executa o endpoint ObterProduto passando o id como parâmetro
       return new CreatedAtRouteResult("ObterProduto", new { id = produto.ProdutoId }, produto);
+    }
+
+    [HttpPut("{id:int}")] //PUT atualiza todos os campos do objeto
+    public ActionResult Put(int id, Produto produto)
+    {
+      if(id != produto.ProdutoId)
+      {
+        return BadRequest();  
+      }
+
+      _context.Entry(produto).State = EntityState.Modified;
+      _context.SaveChanges();
+
+      return Ok(produto);
     }
   }
 }
