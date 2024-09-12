@@ -12,9 +12,6 @@ Instrutor: Jose Carlos Macoratti
 
 [IntelliCode for C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.vscodeintellicode-csharp)
 
-
-
-
 ## Conceitos gerais
 
 ### API - Application Programming Interface
@@ -129,7 +126,7 @@ DbContext representa uma sessão com o banco de dados, sendo uma ponte entre as 
 
 Permite atualizar de forma incremental o esquema de banco de dados de acordo com as atualizações das classes do modelo de domínio (models) definido no código.
 
-Comandos do dotnet para criação/aplicação de Migrations utilizando o **dotnet ef**:
+Comandos do dotnet para criação/aplicação de Migrations utilizando o **dotnet ef** (necessário estar dentro do diretório onde está o projeto):
 - Criar novo script: `dotnet ef migrations add "nome"`
 - Remover um script já criado: `dotnet ef migrations remove "nome"`
 - Aplicar alterações no bando de dados: `dotnet ef database update`
@@ -140,6 +137,25 @@ Comandos do dotnet para criação/aplicação de Migrations utilizando o **dotne
 > - remove-migration "nome"
 > - update-database
 
+### Data Annotations 
 
+Atributos que podem ser aplicados a classes e seus membros para fornecer metadados sobre como esses recursos devem ser tratados.
 
+Namespaces:
+- System.ComponentModel.DataAnnotations
+- System.ComponentModel.DataAnnotations.Schema
 
+Utilização:
+- Validação de dados
+- Formatação e exibição de dados
+- Geração de código
+- Especificar relacionamento entre as entidades
+- Sobrescrever as convenções do EF Core:
+  - **Key** - identifica a propriedade como chave primária
+  - **Table("nome")** - define o nome da tabela para a qual a classe será mapeada
+  - **Column** - define a coluna na tabela para a qual a propriedade será mapeada
+  - **DataType** - associa um tipo de dados a uma propriedade
+  - **ForeignKey** - define a propriedade que será chave estrangeira
+  - **NotMapped** - não faz mapeamento da propriedade
+  - **StringLength** - define o tamanho mínimo e máximo para o tipo
+  - **Required** - define o campo como obrigatório (NOT NULL) 
