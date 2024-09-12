@@ -86,3 +86,16 @@ Os serviços são instânciados em cada solicitação/request. Se durante um req
 3) Singleton
 O serviço é instânciado apenas uma vez durante a vida útil do aplicativo.
 
+## Web API
+
+- .NET 8
+- MySQL
+- Entity Framework (Code First)
+- Criar uma Web API para catálogo de produtos e categorias
+- Caminho base dos endpoints: /v1/api/{recurso-substantivo}
+- Padrão repositório
+- Arquitetura em camadas: 
+  - Presentation - Angular, Views, Mobile
+  - Service - Classes de serviços 
+  - Business Logic/Application Core - Repositórios, domínios, serviços
+  - Data Access/Persistence - EF Core, MySQL
