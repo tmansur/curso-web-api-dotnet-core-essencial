@@ -40,6 +40,27 @@ namespace API.Catalogo.Controllers
       }
 
       return produto;
-    }    
+    }
+
+    [HttpPost]
+    public ActionResult Post(Produto produto) //Não é mais necessário utilizar o atributo [FromBody] para definir que a informação vem via body no request
+    {
+      // Validaçaõ de ModelState é feita de forma automatica, por isso não é mais necessário o código a seguir
+      //if(!ModelState.IsValid)
+      //{
+      //  return BadRequest(ModelState);
+      //}
+
+      if (produto is null)
+      {
+        return BadRequest();
+      }
+
+      _context.Produtos.Add(produto);
+      _context.SaveChanges();
+
+      //Retorna 201 e os dados do produto criado, para isso executa o endpoint ObterProduto passando o id como parâmetro
+      return new CreatedAtRouteResult("ObterProduto", new { id = produto.ProdutoId }, produto);
+    }
   }
 }
