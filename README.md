@@ -86,11 +86,32 @@ Os serviços são instânciados em cada solicitação/request. Se durante um req
 3) Singleton
 O serviço é instânciado apenas uma vez durante a vida útil do aplicativo.
 
+### Classes Anêmicas
+
+São classes que possuem apenas propriedades definidas, não possuem comportamentos.
+
+~~~ Csharp
+//Categoria.cs
+public class Categoria
+{
+  public int CategoriaId { get; set; }
+  public string? Nome { get; set; }
+  public string? ImagemUrl { get; set; }
+}
+~~~
+
 ## Web API
 
 - .NET 8
 - MySQL
-- Entity Framework (Code First)
+- Entity Framework (Code First):
+  - Microsoft.EntityFrameworkCore.Design
+  - Microsoft.EntityFrameworkCOre.Tools (**instalar via linha de comando no diretório API.Contalogo**)
+    - Instalação: `dotnet tool install --global dotnet-ef`
+    - Atualização (caso esteja em versão antiga): `dotnet tool update --global dotnet-ef`
+    - Verificando se a ferramenta está instalada: `dotnet ef`   
+- Pomelo
+  - Pomelo.EntityFrameworkCore.Mysql 
 - Criar uma Web API para catálogo de produtos e categorias
 - Caminho base dos endpoints: /v1/api/{recurso-substantivo}
 - Padrão repositório
@@ -99,3 +120,26 @@ O serviço é instânciado apenas uma vez durante a vida útil do aplicativo.
   - Service - Classes de serviços 
   - Business Logic/Application Core - Repositórios, domínios, serviços
   - Data Access/Persistence - EF Core, MySQL
+ 
+### Classe de contexto do EF Core
+
+DbContext representa uma sessão com o banco de dados, sendo uma ponte entre as entidades de domínios (models) e o banco.
+
+### Migrations
+
+Permite atualizar de forma incremental o esquema de banco de dados de acordo com as atualizações das classes do modelo de domínio (models) definido no código.
+
+Comandos do dotnet para criação/aplicação de Migrations utilizando o **dotnet ef**:
+- Criar novo script: `dotnet ef migrations add "nome"`
+- Remover um script já criado: `dotnet ef migrations remove "nome"`
+- Aplicar alterações no bando de dados: `dotnet ef database update`
+
+> [!NOTE]
+> Para aplicar o Migrations via Package Manager Console do VS, é necessário instalar o pacote **Microsoft.EntityFrameworkCoreTools via Nuget** e utilizar os seguintes comandos:
+> - add-migration "nome"
+> - remove-migration "nome"
+> - update-database
+
+
+
+
