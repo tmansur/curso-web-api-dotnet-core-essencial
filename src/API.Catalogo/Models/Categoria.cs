@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.Catalogo.Models
 {
@@ -13,10 +14,15 @@ namespace API.Catalogo.Models
       Produtos = new Collection<Produto>(); //É uma BOA PRÁTICA inicializar as coleções definidas na classe
     }
 
+    [Key]
     public int CategoriaId { get; set; }
 
+    [Required]
+    [StringLength(80)]
     public string? Nome { get; set; }
 
+    [Required]
+    [StringLength(300)]
     public string? ImagemUrl { get; set; }
 
     //Uma categoria pode ter N produtos -> relacionamento de um-para-muitos entre as tabelas Categorias e Produtos 
