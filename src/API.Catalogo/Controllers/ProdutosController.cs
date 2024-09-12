@@ -21,7 +21,7 @@ namespace API.Catalogo.Controllers
     {
       var produtos = _context.Produtos.ToList();
 
-      if(produtos is null)
+      if (produtos is null)
       {
         return NotFound("Produtos não encontrados");
       }
@@ -30,12 +30,12 @@ namespace API.Catalogo.Controllers
     }
 
 
-    [HttpGet("{id:int}", Name="ObterProduto")] //Só aceita parâmetro do tipo int e está nomeado como ObterProduto
+    [HttpGet("{id:int}", Name = "ObterProduto")] //Só aceita parâmetro do tipo int e está nomeado como ObterProduto
     public ActionResult<Produto> Get(int id)
     {
       var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
 
-      if(produto == null)
+      if (produto == null)
       {
         return NotFound($"Produto com id = {id} não encontrado");
       }
@@ -67,12 +67,25 @@ namespace API.Catalogo.Controllers
     [HttpPut("{id:int}")] //PUT atualiza todos os campos do objeto
     public ActionResult Put(int id, Produto produto)
     {
-      if(id != produto.ProdutoId)
+      if (id != produto.ProdutoId)
       {
-        return BadRequest();  
+        return BadRequest();
       }
 
       _context.Entry(produto).State = EntityState.Modified;
+      _context.SaveChanges();
+
+      return Ok(produto);
+    }
+
+    [HttpDelete("{id:int}")]
+    public ActionResult Delete(int id)
+    {
+      var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+
+      if (produto is null) return NotFound("Produto não encontrado");
+
+      _context.Produtos.Remove(produto);
       _context.SaveChanges();
 
       return Ok(produto);
