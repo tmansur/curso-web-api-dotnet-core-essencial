@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace API.Catalogo.Models
 {
@@ -30,6 +31,13 @@ namespace API.Catalogo.Models
 
     //Relacionamento entre Produtos e Categorias (um produto pode ter apenas uma categoria relacionada)
     public int CategoriaId {  get; set; }
+
+    [JsonIgnore] //Ignora a propriedade na serialização e na desserialização
     public Categoria? Categoria { get; set; }
+
+    // Por padrão, todas propriedades definidas como públicas são serializadas, o que pode gerar informações desnecessárias no request/response
+    // Para evitar isso pode-se ingnorar propriedades:
+    // 1) Ignorando propriedades individuais: [JsonIgnore] ou [JsonIgnore(Condition=JsonIgnoreCondition.Always)] 
+    // 2) Ignorando todas as propriedades: Incluir na configuração do JSON na classe program .DefaultIgnoreCondition = JsonIgnoreCondition.<condição>)
   }
 }
