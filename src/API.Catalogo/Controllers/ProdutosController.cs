@@ -19,7 +19,7 @@ namespace API.Catalogo.Controllers
     [HttpGet]
     public ActionResult<IEnumerable<Produto>> Get()
     {
-      var produtos = _context.Produtos.ToList();
+      var produtos = _context.Produtos.AsNoTracking().ToList(); // Utiliza-se .AsNoTracking() para otimizar consultas que possuem ação apenas de leitura
 
       if (produtos is null)
       {
@@ -33,7 +33,7 @@ namespace API.Catalogo.Controllers
     [HttpGet("{id:int}", Name = "ObterProduto")] //Só aceita parâmetro do tipo int e está nomeado como ObterProduto
     public ActionResult<Produto> Get(int id)
     {
-      var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+      var produto = _context.Produtos.AsNoTracking().FirstOrDefault(p => p.ProdutoId == id);
 
       if (produto == null)
       {
