@@ -18,9 +18,9 @@ namespace API.Catalogo.Controllers
 
     // rota: api/produtos
     [HttpGet]
-    public ActionResult<IEnumerable<Produto>> Get()
+    public async Task<ActionResult<IEnumerable<Produto>>> GetAsync()
     {
-      var produtos = _context.Produtos.AsNoTracking().ToList(); // Utiliza-se .AsNoTracking() para otimizar consultas que possuem ação apenas de leitura
+      var produtos = await _context.Produtos.AsNoTracking().ToListAsync(); // Utiliza-se .AsNoTracking() para otimizar consultas que possuem ação apenas de leitura
 
       if (produtos is null)
       {
@@ -32,9 +32,9 @@ namespace API.Catalogo.Controllers
 
     // rota: api/produtos/primeiro
     [HttpGet("primeiro")] //modifica a rota para evitar duplicidade de rota com o endpoint que retorna todos os produtos
-    public ActionResult<Produto> GetPrimeiroProduto()
+    public async Task<ActionResult<Produto>> GetPrimeiroProdutoAsync()
     {
-      var primeiroProduto = _context.Produtos.AsNoTracking().FirstOrDefault();
+      var primeiroProduto = await _context.Produtos.AsNoTracking().FirstOrDefaultAsync();
 
       if (primeiroProduto is null)
       {
@@ -46,9 +46,9 @@ namespace API.Catalogo.Controllers
 
     // rota: api/produtos/{id}
     [HttpGet("{id:int:min(1)}", Name = "ObterProduto")] //Só aceita parâmetro do tipo int maior que 0 e está nomeado como ObterProduto
-    public ActionResult<Produto> Get(int id)
+    public async Task<ActionResult<Produto>> GetAsync(int id)
     {
-      var produto = _context.Produtos.AsNoTracking().FirstOrDefault(p => p.ProdutoId == id);
+      var produto = await _context.Produtos.AsNoTracking().FirstOrDefaultAsync(p => p.ProdutoId == id);
 
       if (produto == null)
       {
@@ -60,7 +60,7 @@ namespace API.Catalogo.Controllers
 
     // rota: api/produtos
     [HttpPost]
-    public ActionResult Post(Produto produto) //Não é mais necessário utilizar o atributo [FromBody] para definir que a informação vem via body no request
+    public async Task<ActionResult> PostAsync(Produto produto) //Não é mais necessário utilizar o atributo [FromBody] para definir que a informação vem via body no request
     {
       // Validaçaõ de ModelState é feita de forma automatica, por isso não é mais necessário o código a seguir
       //if(!ModelState.IsValid)
@@ -73,15 +73,15 @@ namespace API.Catalogo.Controllers
         return BadRequest();
       }
 
-      _context.Produtos.Add(produto);
-      _context.SaveChanges();
+      await _context.Produtos.AddAsync(produto);
+      await _context.SaveChangesAsync();
 
       //Retorna 201 e os dados do produto criado, para isso executa o endpoint ObterProduto passando o id como parâmetro
       return new CreatedAtRouteResult("ObterProduto", new { id = produto.ProdutoId }, produto);
     }
 
     [HttpPut("{id:int}")] //PUT atualiza todos os campos do objeto
-    public ActionResult Put(int id, Produto produto)
+    public async Task<ActionResult> PutAsync(int id, Produto produto)
     {
       if (id != produto.ProdutoId)
       {
@@ -89,20 +89,20 @@ namespace API.Catalogo.Controllers
       }
 
       _context.Entry(produto).State = EntityState.Modified;
-      _context.SaveChanges();
+      await _context.SaveChangesAsync();
 
       return Ok(produto);
     }
 
     [HttpDelete("{id:int}")]
-    public ActionResult Delete(int id)
+    public async Task<ActionResult> DeleteAsync(int id)
     {
-      var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+      var produto = await _context.Produtos.FirstOrDefaultAsync(p => p.ProdutoId == id);
 
       if (produto is null) return NotFound("Produto não encontrado");
 
       _context.Produtos.Remove(produto);
-      _context.SaveChanges();
+      await _context.SaveChangesAsync());
 
       return Ok(produto);
     }

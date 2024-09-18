@@ -17,21 +17,21 @@ namespace API.Catalogo.Controllers
     }
 
     [HttpGet("produtos")] // rota: api/categorias/produtos
-    public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
+    public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoriasProdutosAsync()
     {
-      return _context.Categorias.Include(p => p.Produtos).AsNoTracking().ToList();
+      return await _context.Categorias.Include(p => p.Produtos).AsNoTracking().ToListAsync();
     }
 
     [HttpGet] // rota: api/categorias
-    public ActionResult<IEnumerable<Categoria>> Get()
+    public async Task<ActionResult<IEnumerable<Categoria>>> GetAsync()
     {
-      return _context.Categorias.AsNoTracking().ToList();
+      return await _context.Categorias.AsNoTracking().ToListAsync();
     }
 
     [HttpGet("{id:int}", Name = "ObterCategoria")]
-    public ActionResult<Categoria> Get(int id)
+    public async Task<ActionResult<Categoria>> GetAsync(int id)
     {
-      var categoria = _context.Categorias.AsNoTracking().FirstOrDefault(c => c.CategoriaId == id);
+      var categoria = await _context.Categorias.AsNoTracking().FirstOrDefaultAsync(c => c.CategoriaId == id);
       
       if(categoria == null) return NotFound("Categoria não encontrada");
 
@@ -39,36 +39,36 @@ namespace API.Catalogo.Controllers
     }
 
     [HttpPost]
-    public ActionResult Post(Categoria categoria)
+    public async Task<ActionResult> PostAsync(Categoria categoria)
     {
       if (categoria is null) return BadRequest();
 
-      _context.Categorias.Add(categoria);
-      _context.SaveChanges();
+      await _context.Categorias.AddAsync(categoria);
+      await _context.SaveChangesAsync();
 
       return new CreatedAtRouteResult("ObterCategoria", new { id = categoria.CategoriaId }, categoria);
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult Put(int id, Categoria categoria)
+    public async Task<ActionResult> PutAsync(int id, Categoria categoria)
     {
       if(id != categoria.CategoriaId) return BadRequest();
 
       _context.Entry(categoria).State = EntityState.Modified;
-      _context.SaveChanges();
+      await _context.SaveChangesAsync();
 
       return Ok(categoria);
     }
 
     [HttpDelete("{id:int}")]
-    public ActionResult<Categoria> Delete(int id)
+    public async Task<ActionResult<Categoria>> DeleteAsync(int id)
     {
-      var categoria = _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);
+      var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.CategoriaId == id);
 
       if(categoria == null) return NotFound();
 
       _context.Categorias.Remove(categoria);
-      _context.SaveChanges();
+      await _context.SaveChangesAsync();
 
       return Ok(categoria);
     }
