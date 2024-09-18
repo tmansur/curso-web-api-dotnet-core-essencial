@@ -151,6 +151,14 @@ Namespaces:
 
 Utilização:
 - Validação de dados
+  - Required
+  - RegularExpression
+  - StringLength
+  - Range
+  - CreditCard
+  - Url
+  - Phone
+  - Compare
 - Formatação e exibição de dados
 - Geração de código
 - Especificar relacionamento entre as entidades
@@ -162,6 +170,7 @@ Utilização:
   - **ForeignKey** - define a propriedade que será chave estrangeira
   - **NotMapped** - não faz mapeamento da propriedade
   - **StringLength** - define o tamanho mínimo e máximo para o tipo
+  - **MaxLength**
   - **Required** - define o campo como obrigatório (NOT NULL) 
 
 ### Tratamento de erros
@@ -182,7 +191,7 @@ Middlewares que podem ser utilizados para habilitar explicitamente o roteamento 
 - UseRouting()
 - USeEndpoints()
 
-#### Padrões de roteamento
+### Padrões de roteamento
 
 Definindo rota padrão com atributo na classe controller: `[Route("api/[controller]")]` // rota: /api/produtos
 
@@ -203,5 +212,50 @@ Restringir os valores aceito nos parâmetros da rota:
 - `[HttpGet("{valor:alpha}")]` //Aceita valor alfanumérico
 - `[HttpGet("{valor:alpha:length(5)}")]` //Aceita valor alfanumérico de tamanho 5
 
+### Model Binding
 
 
+#### Valores de formulário (corpo do request)
+
+Valores passados no corpo de um request para endpoints de verbo PUT, PATCH e/ou POST
+
+~~~CSharp
+[HttpPut("{id}")]
+public ActionResult Put(int id, [FromBody] Produto produto)
+~~~
+
+#### Rotas
+
+api/produtos/**4**
+
+~~~CSharp
+[Httpget("{id}")]
+public ActionResult<Produtos> Get(int id)
+~~~
+
+#### Query Strings
+
+api/produtos/4?**nome=Suco&ativo=true**
+
+~~~CSharp
+[Httpget("{id}")]
+public ActionResult<Produtos> Get(int id, string nome, bool ativo)
+~~~
+
+#### Atributos para definir Model Binding
+- BindRequired
+  - Obriga que o parâmetro seja passado para ocorrer o binding
+  - Configuração feita na action do controller
+  - Exemplo: `public ActionResult<Produtos> Get([BindingRequired]int id)`
+- BindNever
+  - Não vincular a informação ao parâmetro
+  - Configuração feita na classe do modelo
+  - Exemplo: [BindNever] public string ImagemUrl {get; set;}
+
+#### Atributos que indicam a fonte de dados dos parâmetros
+- FromForm
+- FromRoute: recebe os dados passados na rota do endpoint.
+- FromQuery: recebe os dados via querystring.
+- FromHeader
+- FromBody
+- FromServices: recebe os dados via container de injeção de dependência de forma direta, sem a necessidade de usar a injeção de dependência no construtor.
