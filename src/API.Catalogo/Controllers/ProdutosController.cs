@@ -45,7 +45,7 @@ namespace API.Catalogo.Controllers
     }
 
     // rota: api/produtos/{id}
-    [HttpGet("{id:int}", Name = "ObterProduto")] //Só aceita parâmetro do tipo int e está nomeado como ObterProduto
+    [HttpGet("{id:int:min(1)}", Name = "ObterProduto")] //Só aceita parâmetro do tipo int maior que 0 e está nomeado como ObterProduto
     public ActionResult<Produto> Get(int id)
     {
       var produto = _context.Produtos.AsNoTracking().FirstOrDefault(p => p.ProdutoId == id);
