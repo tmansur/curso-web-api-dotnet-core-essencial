@@ -31,6 +31,6 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers(); //Middleware responsável pelo roteamento dos endpoints
 
 app.Run();

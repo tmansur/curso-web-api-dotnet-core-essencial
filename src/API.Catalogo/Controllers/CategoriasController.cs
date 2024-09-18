@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Catalogo.Controllers
 {
   [ApiController]
-  [Route("[controller]")]
+  [Route("api/[controller]")]
   public class CategoriasController : ControllerBase
   {
     private readonly AppDbContext _context;
@@ -16,13 +16,13 @@ namespace API.Catalogo.Controllers
       _context = context;
     }
 
-    [HttpGet("produtos")] // rota: /categorias/produtos
+    [HttpGet("produtos")] // rota: api/categorias/produtos
     public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
     {
       return _context.Categorias.Include(p => p.Produtos).AsNoTracking().ToList();
     }
 
-    [HttpGet] // rota: /categorias
+    [HttpGet] // rota: api/categorias
     public ActionResult<IEnumerable<Categoria>> Get()
     {
       return _context.Categorias.AsNoTracking().ToList();

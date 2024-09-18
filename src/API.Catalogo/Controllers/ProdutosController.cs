@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Catalogo.Controllers
 {
   [ApiController]
-  [Route("[controller]")]
+  [Route("api/[controller]")]
   public class ProdutosController : ControllerBase
   {
     private readonly AppDbContext _context;
@@ -16,6 +16,7 @@ namespace API.Catalogo.Controllers
       _context = context;
     }
 
+    // rota: api/produtos
     [HttpGet]
     public ActionResult<IEnumerable<Produto>> Get()
     {
@@ -29,7 +30,21 @@ namespace API.Catalogo.Controllers
       return produtos;
     }
 
+    // rota: api/produtos/primeiro
+    [HttpGet("primeiro")] //modifica a rota para evitar duplicidade de rota com o endpoint que retorna todos os produtos
+    public ActionResult<Produto> GetPrimeiroProduto()
+    {
+      var primeiroProduto = _context.Produtos.AsNoTracking().FirstOrDefault();
 
+      if (primeiroProduto is null)
+      {
+        return NotFound("Produto não encontrado");
+      }
+
+      return primeiroProduto;
+    }
+
+    // rota: api/produtos/{id}
     [HttpGet("{id:int}", Name = "ObterProduto")] //Só aceita parâmetro do tipo int e está nomeado como ObterProduto
     public ActionResult<Produto> Get(int id)
     {
@@ -43,6 +58,7 @@ namespace API.Catalogo.Controllers
       return produto;
     }
 
+    // rota: api/produtos
     [HttpPost]
     public ActionResult Post(Produto produto) //Não é mais necessário utilizar o atributo [FromBody] para definir que a informação vem via body no request
     {
