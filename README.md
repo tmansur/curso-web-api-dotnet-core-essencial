@@ -12,6 +12,8 @@ Instrutor: Jose Carlos Macoratti
 
 [IntelliCode for C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.vscodeintellicode-csharp)
 
+---------------------------------------------------------------------
+
 ## Conceitos gerais
 
 ### API - Application Programming Interface
@@ -97,6 +99,8 @@ public class Categoria
 }
 ~~~
 
+---------------------------------------------------------------------
+
 ## Web API
 
 - .NET 8
@@ -159,3 +163,45 @@ Utilização:
   - **NotMapped** - não faz mapeamento da propriedade
   - **StringLength** - define o tamanho mínimo e máximo para o tipo
   - **Required** - define o campo como obrigatório (NOT NULL) 
+
+### Tratamento de erros
+
+Para realizar o tratamento de erros de forma personalizada no ambiente de produção, pode-se utilizar o middleware **UseExceptionHandler**.
+
+~~~CSharp
+//program.cs
+if(!app.Environment.IsDevelopment())
+{
+  app.UserExceptionHandle("/Error");
+}
+~~~
+
+### Roteamento
+
+Middlewares que podem ser utilizados para habilitar explicitamente o roteamento (não são necessário em um projeto WebAPI):
+- UseRouting()
+- USeEndpoints()
+
+#### Padrões de roteamento
+
+Definindo rota padrão com atributo na classe controller: `[Route("api/[controller]")]` // rota: /api/produtos
+
+Incrementando a rota padrão: `HttpGet("primeiro")` // rota: /api/produtos/primeiro
+
+Incluindo parâmetros na rota padrão: 
+- `HttpGet("{id}")` // rota: /api/produtos/{id}
+- `HttpGet("{id}/{param2}")` // rota: /api/produtos/{id}/{param2]
+- `HttpGet("{id}/{param2=Teste}")` // rota: /api/produtos/{id}/Teste
+
+Ignorando a rota padrão: `HttpGet("/primeiro")` // rota: /primeiro
+
+#### Restrições de rota
+
+Restringir os valores aceito nos parâmetros da rota:
+
+- `[HttpGet("{id:int:min(1)}")]` //Aceita int maior que 0
+- `[HttpGet("{valor:alpha}")]` //Aceita valor alfanumérico
+- `[HttpGet("{valor:alpha:length(5)}")]` //Aceita valor alfanumérico de tamanho 5
+
+
+
