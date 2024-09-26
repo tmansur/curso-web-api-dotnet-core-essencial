@@ -259,3 +259,54 @@ public ActionResult<Produtos> Get(int id, string nome, bool ativo)
 - FromHeader
 - FromBody
 - FromServices: recebe os dados via container de injeção de dependência de forma direta, sem a necessidade de usar a injeção de dependência no construtor.
+
+### Validação Personalizada
+
+#### 1-Criar atributos customizados
+
+- Tem como objetivo validar uma propriedade.
+- Pode ser utilizada em diversos modelos e propriedades.
+- Criar uma classe que herda de `ValidationAttribute` e sobrescrever o método `IsValid` para realizar a validação customizada.
+- O método `IsValid` retorna o campo estático `ValidationResul.Success` em caso de sucesso na validação ou uma nova instância da classe `ValidationResult` com a mensagem de erro.  
+
+#### 2-Implementar IValidatableObject no modelo
+
+- Pode acessar todas as propriedades do modelo e realizar uma validação mais complexa.
+- Não pode ser reutilizada em outros modelos.
+
+### Modelo de configuração
+
+appsettings.json
+appsettings.**Development**.json
+appsettings.**Staging**.json
+appsettings.**Production**.json
+
+Utilizar variável de ambiente ASPNETCORE_ENVIRONMENT para definir qual arquivo de configuração utilizar.
+
+Para ler os arquivos de configuração utilizamos o serviço disponível pela interface `IConfiguration`.
+
+~~~CSharp
+//xpto.cs
+private readonly IConfiguration _configuration;
+
+public Xpto(IConfiguration config)
+{
+  _configuration = config;
+}
+
+var valor1 = _configuration["chave"];
+var valor2 = _configuration["seção:chave"];
+~~~
+
+Para ler os dados do arquivo de configuração a partir da classe `program.cs` utilizamos a instância de **builder** que possui uma propriedade **Configuration**:
+
+~~~CSharp
+//program.cs
+var valor1 = builder.Configuration["chave1"];
+var valor2 = builder.Configuration["secao1:chave2"];
+var conexão = builder.Configuration.GetConnectionString("DefaultConnection"); //Retorna valor da chave "DefaultConnection" existente na sessão "ConnectionString"
+~~~
+
+### Middleware - Tratamento global de exceções
+
+Utilizar o middleware `UseExceptionHandle`.
