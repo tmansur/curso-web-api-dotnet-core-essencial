@@ -102,7 +102,7 @@ namespace API.Catalogo.Controllers
       if (produto is null) return NotFound("Produto não encontrado");
 
       _context.Produtos.Remove(produto);
-      await _context.SaveChangesAsync());
+      await _context.SaveChangesAsync();
 
       return Ok(produto);
     }
