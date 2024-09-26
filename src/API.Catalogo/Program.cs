@@ -20,17 +20,27 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
+// Configuração de fluxo de middlewares
+
 if (app.Environment.IsDevelopment())
 {
-  app.UseSwagger();
-  app.UseSwaggerUI();
+  app.UseSwagger(); //Middleware do swagger
+  app.UseSwaggerUI(); //Middleware de interface do swagger
 }
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseAuthorization(); //Middleware responsável pelo processo de autorização
+
+//Middle definido utilizando request delegate (função que receve um objeto de contexto do request HTTP e executa uma lógica para esse request)
+//app.Use(async (context, next) =>
+//{
+//  //adicionar código antes do request
+//  await next(context);
+//  //adicionar código depois do request
+//});
 
 app.MapControllers(); //Middleware responsável pelo roteamento dos endpoints
 
-app.Run();
+app.Run(); // Middleware final do pipeline de processamento do request
