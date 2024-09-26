@@ -5,14 +5,14 @@ using System.Text.Json.Serialization;
 
 namespace API.Catalogo.Models
 {
-  public class Produto
+  public class Produto : IValidatableObject
   {
     [Key]
     public int ProdutoId { get; set; }
 
     [Required]
     [StringLength(80, ErrorMessage="O nome deve ter no máximo {1} caracteres")]
-    [PrimeiraLetraMaiuscula] //Atributo customizado
+    //[PrimeiraLetraMaiuscula] //Atributo customizado
     public string? Nome { get; set; }
 
     [Required]
@@ -37,6 +37,27 @@ namespace API.Catalogo.Models
 
     [JsonIgnore] //Ignora a propriedade na serialização e na desserialização
     public Categoria? Categoria { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+      if(!string.IsNullOrEmpty(Nome))
+      {
+        var primeiraLetra = Nome[0].ToString();
+        if(primeiraLetra != primeiraLetra.ToUpper())
+        {
+          yield return new ValidationResult(
+            "A primeira letra do produto deve ser maiúscula",
+            new[] { nameof(Nome) });
+        }
+      }
+
+      if (Estoque <= 0)
+      {
+        yield return new ValidationResult(
+          "O estoque deve ser maior que zero",
+          new[] { nameof(Estoque) });
+      }
+    }
 
     // Por padrão, todas propriedades definidas como públicas são serializadas, o que pode gerar informações desnecessárias no request/response
     // Para evitar isso pode-se ingnorar propriedades:
