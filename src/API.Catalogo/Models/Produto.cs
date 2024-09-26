@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using API.Catalogo.Validations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -11,6 +12,7 @@ namespace API.Catalogo.Models
 
     [Required]
     [StringLength(80, ErrorMessage="O nome deve ter no máximo {1} caracteres")]
+    [PrimeiraLetraMaiuscula] //Atributo customizado
     public string? Nome { get; set; }
 
     [Required]
