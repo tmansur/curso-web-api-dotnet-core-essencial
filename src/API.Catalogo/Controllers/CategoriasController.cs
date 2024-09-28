@@ -1,4 +1,5 @@
 ﻿using API.Catalogo.Context;
+using API.Catalogo.Filters;
 using API.Catalogo.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,7 @@ namespace API.Catalogo.Controllers
     }
 
     [HttpGet] // rota: api/categorias
+    [ServiceFilter(typeof(ApiLoggingFilter))] //Filtro personalizado
     public async Task<ActionResult<IEnumerable<Categoria>>> GetAsync()
     {
       return await _context.Categorias.AsNoTracking().ToListAsync();
