@@ -310,3 +310,39 @@ var conexão = builder.Configuration.GetConnectionString("DefaultConnection"); /
 ### Middleware - Tratamento global de exceções
 
 Utilizar o middleware `UseExceptionHandle`.
+
+### Filtros
+
+São atributos anexados às classes ou métodos dos controladores que injetam lógica extra ao processamento de uma requisição. Permitem executar código personalizado antes ou depois de executar uma action.
+
+Tipos de filtro:
+- Authorization - primeiro filtro a ser executado, determina se usuário tem autorização para executar o request.
+- Resource - executado antes do **model binding** ocorrer.
+- Action - executa código imediatamente antes e depois do método action do controller.
+- Exception - utilizado para manipular exceções antes do corpo da response ser escrito.
+- Result - executa código antes ou depois da execução dos resultados das actions do controller.
+
+Tipos de implementação
+- Síncrona:
+  - IActionFilter
+  - onActionExecuting e onActionExecuted
+- Assíncrona:
+  - IAsyncActionFilter
+  - onActionExecutingAsync
+
+Escopo de adição do filtro:
+- Método action
+- Classe do controller
+- Globalmente (será aplicado a todos controladores e actions)
+
+Ordem de execução dos filtros: global, classe, método.
+
+### Logging
+
+Microsoft.Extensions.Logging
+
+Principais interfaces:
+- ILoggingFactory
+- ILoggingProvider
+- ILogger
+
