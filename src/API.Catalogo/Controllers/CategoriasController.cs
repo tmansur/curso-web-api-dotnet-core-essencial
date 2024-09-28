@@ -11,15 +11,19 @@ namespace API.Catalogo.Controllers
   public class CategoriasController : ControllerBase
   {
     private readonly AppDbContext _context;
+    private readonly ILogger _logger;
 
-    public CategoriasController(AppDbContext context)
+    public CategoriasController(AppDbContext context, ILogger<CategoriasController> logger)
     {
       _context = context;
+      _logger = logger;
     }
 
     [HttpGet("produtos")] // rota: api/categorias/produtos
     public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoriasProdutosAsync()
     {
+      _logger.LogInformation("================ GET api/categorias/produtos ================");
+
       return await _context.Categorias.Include(p => p.Produtos).AsNoTracking().ToListAsync();
     }
 
@@ -27,13 +31,17 @@ namespace API.Catalogo.Controllers
     [ServiceFilter(typeof(ApiLoggingFilter))] //Filtro personalizado
     public async Task<ActionResult<IEnumerable<Categoria>>> GetAsync()
     {
+      _logger.LogInformation("================ GET api/categoria ================");
+
       return await _context.Categorias.AsNoTracking().ToListAsync();
     }
 
     [HttpGet("{id:int}", Name = "ObterCategoria")]
     public async Task<ActionResult<Categoria>> GetAsync(int id)
     {
+      _logger.LogInformation("================ GET api/categorias/id ================");
       var categoria = await _context.Categorias.AsNoTracking().FirstOrDefaultAsync(c => c.CategoriaId == id);
+
       
       if(categoria == null) return NotFound("Categoria não encontrada");
 
