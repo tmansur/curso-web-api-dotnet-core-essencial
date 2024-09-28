@@ -1,4 +1,5 @@
 using API.Catalogo.Context;
+using API.Catalogo.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -27,6 +28,7 @@ if (app.Environment.IsDevelopment())
 {
   app.UseSwagger(); //Middleware do swagger
   app.UseSwaggerUI(); //Middleware de interface do swagger
+  app.ConfigureExceptionHandler();
 }
 
 app.UseHttpsRedirection();
