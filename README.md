@@ -346,3 +346,23 @@ Principais interfaces:
 - ILoggingProvider
 - ILogger
 
+#### Log customizado
+....
+
+---------------------------------------------------------------------
+
+## Padrão Repository
+
+Lógica de negócio separada da lógica de acesso a dados (repository).
+
+Duas abordagens:
+- Repository específico: cria interface para uma entidade específica.
+- Repository genérico: cria interface genérica contendo o contrato que define métodos genéricos.
+- 
+---------------------------------------------------------------------
+
+## Padrão Unity of Work
+
+
+
+###
