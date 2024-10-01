@@ -1,6 +1,7 @@
 ﻿using API.Catalogo.Context;
 using API.Catalogo.Filters;
 using API.Catalogo.Models;
+using API.Catalogo.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,23 +10,23 @@ namespace API.Catalogo.Controllers
   [ApiController]
   [Route("api/[controller]")]
   public class CategoriasController : ControllerBase
-  {
-    private readonly AppDbContext _context;
+  {    
     private readonly ILogger _logger;
+    private readonly ICategoriaRepository _repository;
 
-    public CategoriasController(AppDbContext context, ILogger<CategoriasController> logger)
+    public CategoriasController(ILogger<CategoriasController> logger, ICategoriaRepository repository)
     {
-      _context = context;
       _logger = logger;
+      _repository = repository;
     }
 
-    [HttpGet("produtos")] // rota: api/categorias/produtos
-    public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoriasProdutosAsync()
-    {
-      _logger.LogInformation("================ GET api/categorias/produtos ================");
+    //[HttpGet("produtos")] // rota: api/categorias/produtos
+    //public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoriasProdutosAsync()
+    //{
+    //  _logger.LogInformation("================ GET api/categorias/produtos ================");
 
-      return await _context.Categorias.Include(p => p.Produtos).AsNoTracking().ToListAsync();
-    }
+    //  return await _context.Categorias.Include(p => p.Produtos).AsNoTracking().ToListAsync();
+    //}
 
     [HttpGet] // rota: api/categorias
     [ServiceFilter(typeof(ApiLoggingFilter))] //Filtro personalizado
@@ -33,19 +34,19 @@ namespace API.Catalogo.Controllers
     {
       _logger.LogInformation("================ GET api/categoria ================");
 
-      return await _context.Categorias.AsNoTracking().ToListAsync();
+      var categorias = await _repository.GetCategoriasAsync();
+      return Ok(categorias);
     }
 
     [HttpGet("{id:int}", Name = "ObterCategoria")]
     public async Task<ActionResult<Categoria>> GetAsync(int id)
     {
       _logger.LogInformation("================ GET api/categorias/id ================");
-      var categoria = await _context.Categorias.AsNoTracking().FirstOrDefaultAsync(c => c.CategoriaId == id);
-
+      var categoria = await _repository.GetCategoriaAsync(id);
       
       if(categoria == null) return NotFound("Categoria não encontrada");
 
-      return categoria;
+      return Ok(categoria);
     }
 
     [HttpPost]
@@ -53,10 +54,9 @@ namespace API.Catalogo.Controllers
     {
       if (categoria is null) return BadRequest();
 
-      await _context.Categorias.AddAsync(categoria);
-      await _context.SaveChangesAsync();
-
-      return new CreatedAtRouteResult("ObterCategoria", new { id = categoria.CategoriaId }, categoria);
+      var newCategoria = await _repository.CreateAsync(categoria);
+    
+      return new CreatedAtRouteResult("ObterCategoria", new { id = newCategoria.CategoriaId }, newCategoria);
     }
 
     [HttpPut("{id:int}")]
@@ -64,23 +64,21 @@ namespace API.Catalogo.Controllers
     {
       if(id != categoria.CategoriaId) return BadRequest();
 
-      _context.Entry(categoria).State = EntityState.Modified;
-      await _context.SaveChangesAsync();
+      var newCategoria = await _repository.UpdateAsync(categoria);
 
-      return Ok(categoria);
+      return Ok(newCategoria);
     }
 
     [HttpDelete("{id:int}")]
     public async Task<ActionResult<Categoria>> DeleteAsync(int id)
     {
-      var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.CategoriaId == id);
+      var categoria = await _repository.GetCategoriaAsync(id);
 
       if(categoria == null) return NotFound();
 
-      _context.Categorias.Remove(categoria);
-      await _context.SaveChangesAsync();
+      var categoriaDeletada = await _repository.DeleteAsync(id);
 
-      return Ok(categoria);
+      return Ok(categoriaDeletada);
     }
   }
 }

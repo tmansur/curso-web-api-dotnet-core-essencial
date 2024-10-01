@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace API.Catalogo.Models
 {
@@ -26,6 +27,7 @@ namespace API.Catalogo.Models
     public string? ImagemUrl { get; set; }
 
     //Uma categoria pode ter N produtos -> relacionamento de um-para-muitos entre as tabelas Categorias e Produtos 
+    [JsonIgnore] //Ignora a propriedade na serialização do modelo na interface do swagger
     public ICollection<Produto> Produtos { get; set; }
   }
 }

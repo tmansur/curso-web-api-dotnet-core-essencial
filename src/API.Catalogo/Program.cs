@@ -2,6 +2,7 @@ using API.Catalogo.Context;
 using API.Catalogo.Extensions;
 using API.Catalogo.Filters;
 using API.Catalogo.Logging;
+using API.Catalogo.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -27,6 +28,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddScoped<ApiLoggingFilter>();
+builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRespository>();
 
 //Configura o provedor de customizado
 builder.Logging.AddProvider(new CustomerLoggerProvider(new CustomerLoggerProviderConfiguration
