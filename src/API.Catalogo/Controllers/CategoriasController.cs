@@ -1,24 +1,23 @@
-﻿using API.Catalogo.Context;
-using API.Catalogo.Filters;
+﻿using API.Catalogo.Filters;
 using API.Catalogo.Models;
 using API.Catalogo.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Catalogo.Controllers
 {
   [ApiController]
   [Route("api/[controller]")]
   public class CategoriasController : ControllerBase
-  {    
-    private readonly ILogger _logger;
-    private readonly ICategoriaRepository _repository;
+  {
+    private readonly IRepository<Categoria> _repository;
+    private readonly ILogger<CategoriasController> _logger;
 
-    public CategoriasController(ILogger<CategoriasController> logger, ICategoriaRepository repository)
+    public CategoriasController(IRepository<Categoria> repository, ILogger<CategoriasController> logger)
     {
-      _logger = logger;
       _repository = repository;
+      _logger = logger;
     }
+
 
     //[HttpGet("produtos")] // rota: api/categorias/produtos
     //public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoriasProdutosAsync()
@@ -34,7 +33,7 @@ namespace API.Catalogo.Controllers
     {
       _logger.LogInformation("================ GET api/categoria ================");
 
-      var categorias = await _repository.GetCategoriasAsync();
+      var categorias = await _repository.GetAllAsync();
       return Ok(categorias);
     }
 
@@ -42,7 +41,7 @@ namespace API.Catalogo.Controllers
     public async Task<ActionResult<Categoria>> GetAsync(int id)
     {
       _logger.LogInformation("================ GET api/categorias/id ================");
-      var categoria = await _repository.GetCategoriaAsync(id);
+      var categoria = await _repository.GetAsync(c => c.CategoriaId == id);
       
       if(categoria == null) return NotFound("Categoria não encontrada");
 
@@ -72,11 +71,11 @@ namespace API.Catalogo.Controllers
     [HttpDelete("{id:int}")]
     public async Task<ActionResult<Categoria>> DeleteAsync(int id)
     {
-      var categoria = await _repository.GetCategoriaAsync(id);
+      var categoria = await _repository.GetAsync(c => c.CategoriaId == id);
 
       if(categoria == null) return NotFound();
 
-      var categoriaDeletada = await _repository.DeleteAsync(id);
+      var categoriaDeletada = await _repository.DeleteAsync(categoria);
 
       return Ok(categoriaDeletada);
     }

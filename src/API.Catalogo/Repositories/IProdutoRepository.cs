@@ -2,12 +2,8 @@
 
 namespace API.Catalogo.Repositories
 {
-  public interface IProdutoRepository
+  public interface IProdutoRepository : IRepository<Produto>
   {
-    IQueryable<Produto> GetProdutosAsync();
-    Task<Produto> GetProdutoAsync(int id);
-    Task<Produto> CreateAsync(Produto produto);
-    Task<bool> UpdateAsync(Produto produto);
-    Task<bool> DeleteAsync(int id);
+    Task<IEnumerable<Produto>> GetProdutosPorCategoriaAsync(int id);
   }
 }

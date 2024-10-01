@@ -2,12 +2,8 @@
 
 namespace API.Catalogo.Repositories
 {
-  public interface ICategoriaRepository
+  public interface ICategoriaRepository : IRepository<Categoria>
   {
-    Task<IEnumerable<Categoria>> GetCategoriasAsync();
-    Task<Categoria> GetCategoriaAsync(int id);
-    Task<Categoria> CreateAsync(Categoria categoria);
-    Task<Categoria> UpdateAsync(Categoria categoria);
-    Task<Categoria> DeleteAsync(int id);
+    
   }
 }
