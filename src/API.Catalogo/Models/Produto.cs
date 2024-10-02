@@ -25,7 +25,7 @@ namespace API.Catalogo.Models
     public decimal Preco { get; set; }
 
     [Required]
-    [StringLength(3000)]
+    [StringLength(300)]
     public string? ImagemUrl { get; set; }
     
     public float Estoque { get; set; }

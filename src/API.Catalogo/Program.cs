@@ -1,4 +1,5 @@
 using API.Catalogo.Context;
+using API.Catalogo.DTOs.Mappings;
 using API.Catalogo.Extensions;
 using API.Catalogo.Filters;
 using API.Catalogo.Logging;
@@ -38,6 +39,8 @@ builder.Logging.AddProvider(new CustomerLoggerProvider(new CustomerLoggerProvide
 {
   LogLevel = LogLevel.Information
 }));
+
+builder.Services.AddAutoMapper(typeof(ProdutoDtoMappingProfile));
 
 var app = builder.Build();
 
