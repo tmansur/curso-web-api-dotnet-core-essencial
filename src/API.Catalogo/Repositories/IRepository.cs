@@ -13,7 +13,7 @@ namespace API.Catalogo.Repositories
     //Método get que aceita como argumento uma expressão lambda que recebe um objeto do tipo T e retorna um booleano com base no predicate
     Task<T?> GetAsync(Expression<Func<T, bool>> predicate);
     Task<T> CreateAsync(T entity);
-    Task<T> UpdateAsync(T entity);
-    Task<T> DeleteAsync(T entity);
+    T Update(T entity);
+    T Delete(T entity);
   }
 }

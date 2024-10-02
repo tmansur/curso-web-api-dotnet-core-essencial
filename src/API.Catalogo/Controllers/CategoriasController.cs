@@ -9,14 +9,15 @@ namespace API.Catalogo.Controllers
   [Route("api/[controller]")]
   public class CategoriasController : ControllerBase
   {
-    private readonly IRepository<Categoria> _repository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<CategoriasController> _logger;
 
-    public CategoriasController(IRepository<Categoria> repository, ILogger<CategoriasController> logger)
+    public CategoriasController(IUnitOfWork unitOfWork, ILogger<CategoriasController> logger)
     {
-      _repository = repository;
+      _unitOfWork = unitOfWork;
       _logger = logger;
     }
+
 
 
     //[HttpGet("produtos")] // rota: api/categorias/produtos
@@ -33,7 +34,7 @@ namespace API.Catalogo.Controllers
     {
       _logger.LogInformation("================ GET api/categoria ================");
 
-      var categorias = await _repository.GetAllAsync();
+      var categorias = await _unitOfWork.CategoriaRepository.GetAllAsync();
       return Ok(categorias);
     }
 
@@ -41,7 +42,7 @@ namespace API.Catalogo.Controllers
     public async Task<ActionResult<Categoria>> GetAsync(int id)
     {
       _logger.LogInformation("================ GET api/categorias/id ================");
-      var categoria = await _repository.GetAsync(c => c.CategoriaId == id);
+      var categoria = await _unitOfWork.CategoriaRepository.GetAsync(c => c.CategoriaId == id);
       
       if(categoria == null) return NotFound("Categoria não encontrada");
 
@@ -53,8 +54,9 @@ namespace API.Catalogo.Controllers
     {
       if (categoria is null) return BadRequest();
 
-      var newCategoria = await _repository.CreateAsync(categoria);
-    
+      var newCategoria = await _unitOfWork.CategoriaRepository.CreateAsync(categoria);
+      await _unitOfWork.Commit();
+
       return new CreatedAtRouteResult("ObterCategoria", new { id = newCategoria.CategoriaId }, newCategoria);
     }
 
@@ -63,7 +65,8 @@ namespace API.Catalogo.Controllers
     {
       if(id != categoria.CategoriaId) return BadRequest();
 
-      var newCategoria = await _repository.UpdateAsync(categoria);
+      var newCategoria = _unitOfWork.CategoriaRepository.Update(categoria);
+      await _unitOfWork.Commit();
 
       return Ok(newCategoria);
     }
@@ -71,11 +74,12 @@ namespace API.Catalogo.Controllers
     [HttpDelete("{id:int}")]
     public async Task<ActionResult<Categoria>> DeleteAsync(int id)
     {
-      var categoria = await _repository.GetAsync(c => c.CategoriaId == id);
+      var categoria = await _unitOfWork.CategoriaRepository.GetAsync(c => c.CategoriaId == id);
 
       if(categoria == null) return NotFound();
 
-      var categoriaDeletada = await _repository.DeleteAsync(categoria);
+      var categoriaDeletada = _unitOfWork.CategoriaRepository.Delete(categoria);
+      await _unitOfWork.Commit();
 
       return Ok(categoriaDeletada);
     }

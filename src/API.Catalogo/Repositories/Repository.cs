@@ -15,34 +15,31 @@ namespace API.Catalogo.Repositories
 
     public async Task<IEnumerable<T>> GetAllAsync()
     {
-      return await _context.Set<T>().ToListAsync(); //Set<T> -> método usado para acessar uma coleção/tabela, equivale por exemplo a _context.Produtos
+      return await _context.Set<T>().AsNoTracking().ToListAsync(); //Set<T> -> método usado para acessar uma coleção/tabela, equivale por exemplo a _context.Produtos
     }    
 
     public async Task<T?> GetAsync(Expression<Func<T, bool>> predicate)
     {
-      return await _context.Set<T>().FirstOrDefaultAsync(predicate);
+      return await _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(predicate);
     }    
 
     public async Task<T> CreateAsync(T entity)
     {
       await _context.Set<T>().AddAsync(entity);
-      await _context.SaveChangesAsync();
 
       return entity;
     }
 
-    public async Task<T> UpdateAsync(T entity)
+    public T Update(T entity)
     {
       _context.Set<T>().Update(entity); //Recomendado a utilização do .Update quando a entidade já está sendo utilizada pelo contexto do EF
-      await _context.SaveChangesAsync();
 
       return entity;
     }
 
-    public async Task<T> DeleteAsync(T entity)
+    public T Delete(T entity)
     {
       _context.Set<T>().Remove(entity);
-      await _context.SaveChangesAsync();
 
       return entity;
     }
