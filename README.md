@@ -358,11 +358,46 @@ Lógica de negócio separada da lógica de acesso a dados (repository).
 Duas abordagens:
 - Repository específico: cria interface para uma entidade específica.
 - Repository genérico: cria interface genérica contendo o contrato que define métodos genéricos.
-- 
+
 ---------------------------------------------------------------------
 
-## Padrão Unity of Work
+## Padrão Unit of Work
 
+A injeção de cada repositório em cada controlador cria múltiplas instâncias do contexto DbContext, o que pode causar problema de concorrência. O padrão Unit of Work pode ser utilizado para resolver essa situação pois gerencia as transações e garante que todas as operações no banco de dados sejam consistentes (são executadas de forma atômica).
 
+O padrão Unit of Work é um padrão de design de software que centraliza as transações e repositórios em um único ponto. Tem como objetivo garantir que as transações sejam uniformes entre todos os repositórios.
 
-###
+Unit of Work:
+- Gerenciar as transações
+- Ordenar o CRUD no banco de dados
+- Impedir a concorrência
+- Usar somente uma instância do contexto por requisição
+
+Nesse padrão os repositórios são responsáveis por realizar operaões de leituras e escrita no banco de dados, mas não podem chamar o SaveChanges, que fica sobe a responsabilidade do padrão Unit of Work.
+
+---------------------------------------------------------------------
+
+## Transferência de objetos entre camadas
+
+### DTO - Data Transfer Object
+
+Não deve-se retornar entidades de domínio a partir dos endpoints da API.
+
+DTO é um conteiner de dados utilizado para transportar os dados entre camadas de uma aplicação.
+
+Podemos ter DTOs diferentes para entrada e saída de dados. Exemplo> CategoriaRequestDto e CategoriaResponseDto
+
+> [!IMPORTANT]
+> O conceito de DTO e ViewModel são diferentes em relação ao contexto em que são utilizados. DTO é utilizado na transferência de dados entre camadas, já o ViewModel é utilizado na camada de apresentação para estruturar dados que serão exibidos em uma pagina ou View (aplicações MVC).
+
+> [!IMPORTANT]
+> DTOs não devem conter lógica de negócio
+
+O mapeamento entre DTO e entidade pode ser feito de forma manual ou utilizando uma lib como por exemplo a AutoMapper.  
+
+### AutoMapper
+
+Pacote:
+- AutoMapper
+
+Realiza o mapeamento entre objetos que representa entidades e objetos que representam dto de forma automática.
