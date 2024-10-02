@@ -1,4 +1,6 @@
-﻿using API.Catalogo.Filters;
+﻿using API.Catalogo.DTOs;
+using API.Catalogo.DTOs.Mappings;
+using API.Catalogo.Filters;
 using API.Catalogo.Models;
 using API.Catalogo.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -30,49 +32,61 @@ namespace API.Catalogo.Controllers
 
     [HttpGet] // rota: api/categorias
     [ServiceFilter(typeof(ApiLoggingFilter))] //Filtro personalizado
-    public async Task<ActionResult<IEnumerable<Categoria>>> GetAsync()
+    public async Task<ActionResult<IEnumerable<CategoriaDto>>> GetAsync()
     {
       _logger.LogInformation("================ GET api/categoria ================");
 
       var categorias = await _unitOfWork.CategoriaRepository.GetAllAsync();
-      return Ok(categorias);
+      var categoriasDto = categorias.ConvertToDtoList();
+
+      return Ok(categoriasDto);
     }
 
     [HttpGet("{id:int}", Name = "ObterCategoria")]
-    public async Task<ActionResult<Categoria>> GetAsync(int id)
+    public async Task<ActionResult<CategoriaDto>> GetAsync(int id)
     {
       _logger.LogInformation("================ GET api/categorias/id ================");
+      
       var categoria = await _unitOfWork.CategoriaRepository.GetAsync(c => c.CategoriaId == id);
       
       if(categoria == null) return NotFound("Categoria não encontrada");
 
-      return Ok(categoria);
+      var categoriaDto = categoria.ConvertoToDto();
+
+      return Ok(categoriaDto);
     }
 
     [HttpPost]
-    public async Task<ActionResult> PostAsync(Categoria categoria)
+    public async Task<ActionResult<CategoriaDto>> PostAsync(CategoriaDto categoriaDto)
     {
-      if (categoria is null) return BadRequest();
+      if (categoriaDto is null) return BadRequest();
+
+      var categoria = categoriaDto.ConvertToEntity();
 
       var newCategoria = await _unitOfWork.CategoriaRepository.CreateAsync(categoria);
       await _unitOfWork.Commit();
+
+      var newCategoriaDto = newCategoria.ConvertoToDto();
 
       return new CreatedAtRouteResult("ObterCategoria", new { id = newCategoria.CategoriaId }, newCategoria);
     }
 
     [HttpPut("{id:int}")]
-    public async Task<ActionResult> PutAsync(int id, Categoria categoria)
+    public async Task<ActionResult<CategoriaDto>> PutAsync(int id, CategoriaDto categoriaDto)
     {
-      if(id != categoria.CategoriaId) return BadRequest();
+      if(id != categoriaDto.CategoriaId) return BadRequest();
 
+      var categoria = categoriaDto.ConvertToEntity();
       var newCategoria = _unitOfWork.CategoriaRepository.Update(categoria);
       await _unitOfWork.Commit();
 
-      return Ok(newCategoria);
+      var newCategoriaDto = newCategoria.ConvertoToDto();
+
+      return Ok(newCategoriaDto);
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<ActionResult<Categoria>> DeleteAsync(int id)
+    public async Task<ActionResult<CategoriaDto>> DeleteAsync(int id)
     {
       var categoria = await _unitOfWork.CategoriaRepository.GetAsync(c => c.CategoriaId == id);
 
@@ -81,7 +95,9 @@ namespace API.Catalogo.Controllers
       var categoriaDeletada = _unitOfWork.CategoriaRepository.Delete(categoria);
       await _unitOfWork.Commit();
 
-      return Ok(categoriaDeletada);
-    }
+      var categoriaDtoDeletada = categoriaDeletada.ConvertoToDto();
+
+      return Ok(categoriaDtoDeletada);
+    }    
   }
 }
