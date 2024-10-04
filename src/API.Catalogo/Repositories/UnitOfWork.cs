@@ -30,14 +30,14 @@ namespace API.Catalogo.Repositories
       }
     }
 
-    public async Task Commit()
+    public async Task CommitAsync()
     {
       await _context.SaveChangesAsync();
     }
 
-    public void Dispose()
+    public async Task DisposeAsync()
     {
-      _context.Dispose();
+      await _context.DisposeAsync();
     }
   }
 }

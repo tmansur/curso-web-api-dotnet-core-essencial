@@ -129,7 +129,7 @@ namespace API.Catalogo.Controllers
       var produto = _mapper.Map<Produto>(produtoDto);
 
       var produtoNovo = await _unitOfWork.ProdutoRepository.CreateAsync(produto);
-      await _unitOfWork.Commit();
+      await _unitOfWork.CommitAsync();
 
       var produtoDtoNovo = _mapper.Map<ProdutoDto>(produtoNovo);
 
@@ -160,7 +160,7 @@ namespace API.Catalogo.Controllers
       _mapper.Map(produtoUpdateRequestDto, produto);
 
       _unitOfWork.ProdutoRepository.Update(produto);
-      await _unitOfWork.Commit();
+      await _unitOfWork.CommitAsync();
 
       return Ok(_mapper.Map<ProdutoUpdateResponseDto>(produto));
     }
@@ -177,7 +177,7 @@ namespace API.Catalogo.Controllers
       var produto = _mapper.Map<Produto>(produtoDto);
 
       var produtoAtualizado = _unitOfWork.ProdutoRepository.Update(produto);
-      await _unitOfWork.Commit();
+      await _unitOfWork.CommitAsync();
 
       var produtoDtoAtualizado = _mapper.Map<ProdutoDto>(produtoAtualizado);
 
@@ -192,7 +192,7 @@ namespace API.Catalogo.Controllers
       if (produto is null) return NotFound("Produto não encontrado");
 
       var produtoDeletado = _unitOfWork.ProdutoRepository.Delete(produto);
-      await _unitOfWork.Commit();
+      await _unitOfWork.CommitAsync();
 
       var produtoDtoDeletado = _mapper.Map<ProdutoDto>(produtoDeletado);
 

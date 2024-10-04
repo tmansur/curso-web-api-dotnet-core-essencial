@@ -100,7 +100,7 @@ namespace API.Catalogo.Controllers
       var categoria = categoriaDto.ConvertToEntity();
 
       var newCategoria = await _unitOfWork.CategoriaRepository.CreateAsync(categoria);
-      await _unitOfWork.Commit();
+      await _unitOfWork.CommitAsync();
 
       var newCategoriaDto = newCategoria.ConvertoToDto();
 
@@ -114,7 +114,7 @@ namespace API.Catalogo.Controllers
 
       var categoria = categoriaDto.ConvertToEntity();
       var newCategoria = _unitOfWork.CategoriaRepository.Update(categoria);
-      await _unitOfWork.Commit();
+      await _unitOfWork.CommitAsync();
 
       var newCategoriaDto = newCategoria.ConvertoToDto();
 
@@ -129,7 +129,7 @@ namespace API.Catalogo.Controllers
       if(categoria == null) return NotFound();
 
       var categoriaDeletada = _unitOfWork.CategoriaRepository.Delete(categoria);
-      await _unitOfWork.Commit();
+      await _unitOfWork.CommitAsync();
 
       var categoriaDtoDeletada = categoriaDeletada.ConvertoToDto();
 
