@@ -401,3 +401,43 @@ Pacote:
 - AutoMapper
 
 Realiza o mapeamento entre objetos que representa entidades e objetos que representam dto de forma automática.
+
+---------------------------------------------------------------------
+
+## Atualização parcial de entidade com JSON Patch
+
+HttpPatch - atualiza um recurso de forma parcial (body apenas com informações que serão atualizadas).
+
+Utilizar padrão definido na RFC 6902 - (Json Patch)[https://jsonpatch.com/]:
+- Define a estrutura do corpo do request HTTP para indicar as alterações que devem ser feitas no recurso.
+- Operações possíveis: add, remove, **replace**, move copy e test.
+- Propriedades das operações:
+  - **op**: tipo de operação a ser realizada (lista anterior). A operação **replace** é utilizado para atualizar o recurso.
+  - **patch**: caminho da propriedade do objeto que será atualizado. Ex: /estoque
+  - **value**: novo valor da propriedade
+
+JsonPatch na API Web do .NET: https://learn.microsoft.com/pt-br/aspnet/core/web-api/jsonpatch?view=aspnetcore-8.0
+
+Pacotes necessários:
+- Microsoft.AspNetCore.JsonPatch
+- Microsoft.AspNetCore.Mvc.NewtonsoftJson
+Utilizando JsonPatch no controlador:
+- Atributo `HttpPatch`.
+- Parâmetro `JsonPatchDocument<T>`.
+- Aplicar alterações chamando o método `ApplyTo(Object)`.
+- Exemplo:
+
+~~~CSharp
+//TesteController.cs
+
+[HttpPatch]
+public IActionResult PatchTeste(JsonPatchDocumento<TipoTeste> patchDoc)
+{
+  //...
+  patchDoc.ApplyTo(TipoTeste, ModelState);
+  //...
+}
+~~~
+
+
+
