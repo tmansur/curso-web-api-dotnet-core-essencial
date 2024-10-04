@@ -8,7 +8,8 @@ namespace API.Catalogo.DTOs.Mappings
     public ProdutoDtoMappingProfile()
     {
       CreateMap<Produto, ProdutoDto>().ReverseMap();
-      CreateMap<Categoria, CategoriaDto>().ReverseMap();
+      CreateMap<Produto, ProdutoUpdateRequestDto>().ReverseMap();
+      CreateMap<Produto, ProdutoUpdateResponseDto>().ReverseMap();
     }
   }
 }

@@ -2,6 +2,7 @@
 using API.Catalogo.Models;
 using API.Catalogo.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Catalogo.Controllers
@@ -90,6 +91,32 @@ namespace API.Catalogo.Controllers
         new { id = produtoDtoNovo.ProdutoId },
         produtoDtoNovo);
     }
+
+    //Exemplo de body para executar alteração parcial:
+    //[{ "path": "/estoque", "op":"replace", "value": 350  }, { "path": "/datacadastro", "op":"replace", "value": "2024-10-01 09:14:00"  }]
+    [HttpPatch("{id}/updatepartial")]
+    public async Task<ActionResult<ProdutoUpdateResponseDto>> Patch(int id, JsonPatchDocument<ProdutoUpdateRequestDto> produtoDto)
+    {
+      if (produtoDto is null || id <= 0) return BadRequest();
+
+      var produto = await _unitOfWork.ProdutoRepository.GetAsync(p => p.ProdutoId == id);
+
+      if (produto is null) return NotFound();
+
+      var produtoUpdateRequestDto = _mapper.Map<ProdutoUpdateRequestDto>(produto);
+
+      produtoDto.ApplyTo(produtoUpdateRequestDto, ModelState); //Aplica as alterações parciais ao objeto produtoUpdateRequestDto
+
+      if (!ModelState.IsValid || !TryValidateModel(produtoUpdateRequestDto)) return BadRequest(ModelState);
+
+      _mapper.Map(produtoUpdateRequestDto, produto);
+
+      _unitOfWork.ProdutoRepository.Update(produto);
+      await _unitOfWork.Commit();
+
+      return Ok(_mapper.Map<ProdutoUpdateResponseDto>(produto));
+    }
+
 
     [HttpPut("{id:int}")] //PUT atualiza todos os campos do objeto
     public async Task<ActionResult<ProdutoDto>> PutAsync(int id, ProdutoDto produtoDto)

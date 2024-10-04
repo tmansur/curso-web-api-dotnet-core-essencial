@@ -13,11 +13,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(options =>
 {
   options.Filters.Add(typeof(ApiExceptionFilter)); //Adiciona o filtro de exceção criado como um filtro global
-})
-.AddJsonOptions(options =>
+}).AddJsonOptions(options =>
 {
   options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; //Ignora referências ciclicas detectadas durante a serialização
-});
+}).AddNewtonsoftJson();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
