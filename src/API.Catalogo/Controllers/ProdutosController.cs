@@ -71,6 +71,30 @@ namespace API.Catalogo.Controllers
       return Ok(produtosDto);
     }
 
+    [HttpGet("filter/preco/pagination")]
+    public async Task<ActionResult<IEnumerable<ProdutoDto>>> GetProdutosFilterPreco([FromQuery] ProdutosFiltroPreco produtosFilterParameters)
+    {
+      var produtos = await _unitOfWork.ProdutoRepository.GetProdutosFiltroAsync(produtosFilterParameters);
+      return ObterProdutos(produtos);
+    }
+    private ActionResult<IEnumerable<ProdutoDto>> ObterProdutos(PagedList<Produto> produtos)
+    {
+      var metadata = new
+      {
+        produtos.TotalCount,
+        produtos.PageSize,
+        produtos.CurrentPage,
+        produtos.TotalPages,
+        produtos.HasNext,
+        produtos.HasPrevious
+      };
+
+      Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metadata));
+      var produtosDto = _mapper.Map<IEnumerable<ProdutoDto>>(produtos);
+      
+      return Ok(produtosDto);
+    }
+
     // rota: api/produtos/{id}
     [HttpGet("{id:int:min(1)}", Name = "ObterProduto")] //Só aceita parâmetro do tipo int maior que 0 e está nomeado como ObterProduto
     public async Task<ActionResult<ProdutoDto>> GetAsync(int id)

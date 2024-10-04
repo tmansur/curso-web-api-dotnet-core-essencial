@@ -36,20 +36,32 @@ namespace API.Catalogo.Controllers
     public async Task<ActionResult<IEnumerable<CategoriaDto>>> GetAsync([FromQuery] CategoriasParameters categoriasParameters)
     {
       var categorias = await _unitOfWork.CategoriaRepository.GetCategoriasAsync(categoriasParameters);
+      return ObterCategorias(categorias);
+    }
+
+    [HttpGet("filter/nome/pagination")]
+    public async Task<ActionResult<IEnumerable<CategoriaDto>>> GetCategoriasFiltradasAsync([FromQuery] CategoriasFiltroNome categoriasFiltro)
+    {
+      var categoriasFiltradas = await _unitOfWork.CategoriaRepository.GetCategoriasFiltroNomeAsync(categoriasFiltro);
+      return ObterCategorias(categoriasFiltradas);
+    }
+
+    private ActionResult<IEnumerable<CategoriaDto>> ObterCategorias(PagedList<Categoria> categoriasFiltradas)
+    {
       var metadata = new
       {
-        categorias.TotalCount,
-        categorias.PageSize,
-        categorias.CurrentPage,
-        categorias.TotalPages,
-        categorias.HasNext,
-        categorias.HasPrevious
+        categoriasFiltradas.TotalCount,
+        categoriasFiltradas.PageSize,
+        categoriasFiltradas.CurrentPage,
+        categoriasFiltradas.TotalPages,
+        categoriasFiltradas.HasNext,
+        categoriasFiltradas.HasPrevious
       };
 
       //Retorna informações sobre paginação no header do response
       Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metadata));
 
-      var categoriasDto = categorias.ConvertToDtoList();
+      var categoriasDto = categoriasFiltradas.ConvertToDtoList();
 
       return Ok(categoriasDto);
     }

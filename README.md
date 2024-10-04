@@ -439,5 +439,22 @@ public IActionResult PatchTeste(JsonPatchDocumento<TipoTeste> patchDoc)
 }
 ~~~
 
+---------------------------------------------------------------------
 
+## Otimizando a busca de recursos
 
+### Paginação
+
+Paginação através de query string:
+- pageNumber
+- pageSize
+
+Exemplos: /produtos?pageNumber=2&pageSize=10
+
+### Filtro
+
+Filtragem por consulta (query filtering)
+
+Filtragem por rota (route filtering)
+
+### Ordenação

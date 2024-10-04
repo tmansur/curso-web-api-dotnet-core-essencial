@@ -17,5 +17,22 @@ namespace API.Catalogo.Repositories
 
       return categoriasOrdernadas;
     }
+
+    public async Task<PagedList<Categoria>> GetCategoriasFiltroNomeAsync(CategoriasFiltroNome categoriasParams)
+    {
+      var categorias = (await GetAllAsync()).AsQueryable();
+
+      if(!string.IsNullOrEmpty(categoriasParams.Nome))
+      {
+        categorias = categorias.Where(c => c.Nome.Contains(categoriasParams.Nome));
+      }
+
+      var categoriasFiltradas = PagedList<Categoria>.ToPagedList(
+        categorias,
+        categoriasParams.PageNumber,
+        categoriasParams.PageSize);
+
+      return categoriasFiltradas;
+    }
   }
 }
