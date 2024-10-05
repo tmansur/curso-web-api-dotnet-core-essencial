@@ -4,8 +4,11 @@ using API.Catalogo.Extensions;
 using API.Catalogo.Filters;
 using API.Catalogo.Logging;
 using API.Catalogo.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +34,28 @@ string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConne
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
   options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection));
+});
+
+var secretKey = builder.Configuration["Jwt:SecretKey"] ?? throw new ArgumentException("Invalid secret key");
+builder.Services.AddAuthentication(options => //Configura a aplicação para utilizar autenticação com JwtBearer
+{
+  options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+  options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options => //Configura parâmetros para o JwtBearer
+{
+  options.SaveToken = true;
+  options.RequireHttpsMetadata = false; //Não obriga o uso de HTTPS (em produção deveria ser true)
+  options.TokenValidationParameters = new TokenValidationParameters()
+  {
+    ValidateIssuer = true,
+    ValidateAudience = true,
+    ValidateLifetime = true,
+    ValidateIssuerSigningKey = true,
+    ClockSkew = TimeSpan.Zero,
+    ValidAudience = builder.Configuration["Jwt:ValidAudience"],
+    ValidIssuer = builder.Configuration["Jwt:ValidIssuer"],
+    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+  };
 });
 
 builder.Services.AddScoped<ApiLoggingFilter>();

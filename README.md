@@ -457,4 +457,24 @@ Filtragem por consulta (query filtering)
 
 Filtragem por rota (route filtering)
 
-### Ordenação
+---------------------------------------------------------------------
+
+## Segurança: Autenticação, Autorização e Token JWT
+
+Autenticação: verifica se o usuário pode acessar o sistema/API.
+
+Autorização: verifica quais serviços/endpoints que o usuário tem acesso no sistema/API, ocorre após a autenticação.
+
+JWT - Json Web Token
+- Lib: Microsoft.AspNetCore.Authentication.JwtBearer
+
+Identity - :
+- Lib: Microsoft.AspNetCore.Identity.EntityFrameworkCore
+- Tabelas geradas:
+  - AspNetUser
+  - AspNetUserLogins
+  - AspNetUserRoles
+  - AspNetRoles
+  - AspNetRoleClaims
+
+
