@@ -3,6 +3,7 @@ using API.Catalogo.DTOs.Mappings;
 using API.Catalogo.Extensions;
 using API.Catalogo.Filters;
 using API.Catalogo.Logging;
+using API.Catalogo.Models;
 using API.Catalogo.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -26,7 +27,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //Configuração do Identity
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>() //ApplicationUser agora representa os usuários do Identity
   .AddEntityFrameworkStores<AppDbContext>()
   .AddDefaultTokenProviders();
 
