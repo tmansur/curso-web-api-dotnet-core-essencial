@@ -5,6 +5,7 @@ using API.Catalogo.Filters;
 using API.Catalogo.Logging;
 using API.Catalogo.Models;
 using API.Catalogo.Repositories;
+using API.Catalogo.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -64,6 +65,7 @@ builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRespository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 //Configura o provedor de customizado
 builder.Logging.AddProvider(new CustomerLoggerProvider(new CustomerLoggerProviderConfiguration
