@@ -24,6 +24,7 @@ namespace API.Catalogo.Services
         Subject = new ClaimsIdentity(claims),
         Expires = DateTime.UtcNow.AddMinutes(configuration.GetSection("Jwt").GetValue<double>("TokenValidityInMinutes")),
         Audience = configuration.GetSection("Jwt").GetValue<string>("ValidAudience"),
+        Issuer = configuration.GetSection("Jwt").GetValue<string>("ValidIssuer"),
         SigningCredentials = signingCredentials
       };
 
