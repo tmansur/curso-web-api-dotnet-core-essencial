@@ -1,6 +1,7 @@
 ﻿using API.Catalogo.DTOs;
 using API.Catalogo.Models;
 using API.Catalogo.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
@@ -114,7 +115,12 @@ namespace API.Catalogo.Controllers
       return Ok(new ResponseDto { Status = "Success", Message = "User created successfully!" });
     }
 
-    //RefreshToken -> gera um novo refresh token
+    /// <summary>
+    /// Gera um novo refresh token
+    /// </summary>
+    /// <param name="tokenDto"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     [HttpPost]
     [Route("refresh-token")]
     public async Task<IActionResult> RefreshToken(TokenDto tokenDto)
@@ -157,6 +163,25 @@ namespace API.Catalogo.Controllers
       });
     }
 
-    //Revoke -> revogar um refresh token
+    /// <summary>
+    /// Revoga o refresh token de um usuário
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns></returns>
+    [Authorize]
+    [HttpPost]
+    [Route("revoke/{username}")]
+    public async Task<IActionResult> Revoke(string username)
+    {
+      var user = await _userManager.FindByNameAsync(username);
+
+      if (user == null) return BadRequest("Invalid username");
+
+      user.RefreshToken = null;
+
+      await _userManager.UpdateAsync(user);
+
+      return NoContent();
+    }
   }
 }
