@@ -28,9 +28,11 @@ namespace API.Catalogo.Controllers
       _configuration = configuration;
     }
 
-
-    //Login -> usuário efetuar o login
-    //Retorno: Token de acesso e RefreshToken
+    /// <summary>
+    /// Permite que usuário faça autenticação
+    /// </summary>
+    /// <param name="loginDto"></param>
+    /// <returns>token e refresh token</returns>
     [HttpPost]
     [Route("login")]
     public async Task<IActionResult> Login(LoginDto loginDto)
@@ -74,7 +76,43 @@ namespace API.Catalogo.Controllers
 
       return Unauthorized();
     }
-    //Register -> registrar usuário
+
+    /// <summary>
+    /// Registra novo usuário
+    /// </summary>
+    /// <param name="registerDto"></param>
+    /// <returns></returns>
+    [HttpPost]
+    [Route("register")]
+    public async Task<IActionResult> Register(RegisterDto registerDto)
+    {
+      var userExists = await _userManager.FindByNameAsync(registerDto.Username!);
+
+      if(userExists is not null)
+      {
+        return StatusCode(StatusCodes.Status500InternalServerError,
+          new ResponseDto { Status = "Error", Message = "User already exists!" });
+      }
+
+      //Cria nova instancia de ApplicationUser com as informações enviadas
+      ApplicationUser user = new()
+      {
+        Email = registerDto.Email,
+        SecurityStamp = Guid.NewGuid().ToString(),
+        UserName = registerDto.Username
+      };
+
+      //Cria o novo usuário
+      var result = await _userManager.CreateAsync(user, registerDto.Password!);
+
+      if(!result.Succeeded)
+      {
+        return StatusCode(StatusCodes.Status500InternalServerError,
+          new ResponseDto { Status = "Error", Message = "User creation failed." });
+      }
+
+      return Ok(new ResponseDto { Status = "Success", Message = "User created successfully!" });
+    }
 
     //RefreshToken -> gera um novo refresh token
 
