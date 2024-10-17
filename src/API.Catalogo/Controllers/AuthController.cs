@@ -115,6 +115,47 @@ namespace API.Catalogo.Controllers
     }
 
     //RefreshToken -> gera um novo refresh token
+    [HttpPost]
+    [Route("refresh-token")]
+    public async Task<IActionResult> RefreshToken(TokenDto tokenDto)
+    {
+      if(tokenDto is null)
+      {
+        return BadRequest("Invalid client request");
+      }
+
+      string? accessToken = tokenDto.AccessToken ?? throw new ArgumentNullException(nameof(tokenDto));
+      string? refreshToken = tokenDto.RefreshToken ?? throw new ArgumentNullException(nameof(tokenDto));
+
+      //Obtem as claims presentes no token expirado
+      var claims = _tokenService.GetClaimsPrincipalFromExpiredToken(accessToken!, _configuration);
+
+      if(claims is null)
+      {
+        return BadRequest("Invalid access token/refresh token");
+      }
+
+      string username = claims.Identity.Name;
+      var user = await _userManager.FindByNameAsync(username!);
+
+      if(user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+      {
+        return BadRequest("Invalid access token/refresh token");
+      }
+
+      var newAccessToken = _tokenService.GenerateAccessToken(claims.Claims.ToList(), _configuration);
+      var newRefreshToken = _tokenService.GenerateRefreshToken();
+
+      user.RefreshToken = newRefreshToken;
+
+      await _userManager.UpdateAsync(user);
+
+      return new ObjectResult(new
+      {
+        accessToken = new JwtSecurityTokenHandler().WriteToken(newAccessToken),
+        refreshToken = newRefreshToken
+      });
+    }
 
     //Revoke -> revogar um refresh token
   }
