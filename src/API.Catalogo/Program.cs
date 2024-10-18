@@ -25,13 +25,24 @@ builder.Services.AddControllers(options =>
   options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; //Ignora referências ciclicas detectadas durante a serialização
 }).AddNewtonsoftJson();
 
-var origensComAcessoPermitido = "_origensComAcessoPermitido";
-builder.Services.AddCors(options =>
+//var origensComAcessoPermitido = "_origensComAcessoPermitido";
+builder.Services.AddCors(options => 
 {
-  options.AddPolicy(name: origensComAcessoPermitido,
-    policy =>
+  ////Define uma política nomeada de CORS utilizando .AddPolicy
+  //options.AddPolicy(name: origensComAcessoPermitido,
+  //  policy =>
+  //  {
+  //    policy.WithOrigins("https://apirequest.io")
+  //          .AllowAnyHeader()
+  //          .AllowAnyMethod();
+  //  });
+
+  //Define uma política padrão de CORS
+  options.AddDefaultPolicy(policy =>
     {
-      policy.WithOrigins("https://apirequest.io"); //Habilita CORS para essa origem
+      policy.WithOrigins("https://apirequest.io", "https://exemplo.com")
+            .AllowAnyHeader()
+            .WithMethods("GET");
     });
 });
 
@@ -136,7 +147,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors(origensComAcessoPermitido);
+//app.UseCors(origensComAcessoPermitido);
+app.UseCors();
 app.UseAuthorization(); //Middleware responsável pelo processo de autorização
 
 //Middle definido utilizando request delegate (função que receve um objeto de contexto do request HTTP e executa uma lógica para esse request)
