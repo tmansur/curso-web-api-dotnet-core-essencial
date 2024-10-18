@@ -171,9 +171,9 @@ namespace API.Catalogo.Controllers
     /// Revoga o refresh token de um usuário
     /// </summary>
     /// <param name="username"></param>
-    /// <returns></returns>
-    [Authorize]
+    /// <returns></returns>    
     [HttpPost]
+    [Authorize(Policy = "ExclusiveOnly")]
     [Route("revoke/{username}")]
     public async Task<IActionResult> Revoke(string username)
     {
@@ -195,6 +195,7 @@ namespace API.Catalogo.Controllers
     /// <returns></returns>
     [HttpPost]
     [Route("create-role")]
+    [Authorize(Policy = "SuperAdminOnly")]
     public async Task<IActionResult> CreateRole(string roleName)
     {
       var roleExist = await _roleManager.RoleExistsAsync(roleName);
@@ -228,6 +229,7 @@ namespace API.Catalogo.Controllers
     /// <returns></returns>
     [HttpPost]
     [Route("add-user-to-role")]
+    [Authorize(Policy = "SuperAdminOnly")]
     public async Task<IActionResult> AddUserToRole(string email, string roleName)
     {
       var user = await _userManager.FindByEmailAsync(email);

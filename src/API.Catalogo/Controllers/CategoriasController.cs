@@ -4,6 +4,7 @@ using API.Catalogo.Filters;
 using API.Catalogo.Models;
 using API.Catalogo.Pagination;
 using API.Catalogo.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -122,6 +123,7 @@ namespace API.Catalogo.Controllers
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<ActionResult<CategoriaDto>> DeleteAsync(int id)
     {
       var categoria = await _unitOfWork.CategoriaRepository.GetAsync(c => c.CategoriaId == id);

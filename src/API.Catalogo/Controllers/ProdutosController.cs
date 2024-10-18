@@ -3,6 +3,7 @@ using API.Catalogo.Models;
 using API.Catalogo.Pagination;
 using API.Catalogo.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -35,6 +36,7 @@ namespace API.Catalogo.Controllers
 
     // rota: api/produtos
     [HttpGet]
+    [Authorize(Policy = "UserOnly")]
     public async Task<ActionResult<IEnumerable<ProdutoDto>>> GetAsync()
     {
       var produtos = await _unitOfWork.ProdutoRepository.GetAllAsync();
