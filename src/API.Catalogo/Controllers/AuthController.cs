@@ -187,6 +187,11 @@ namespace API.Catalogo.Controllers
       return NoContent();
     }
 
+    /// <summary>
+    /// Cria uma nova role
+    /// </summary>
+    /// <param name="roleName"></param>
+    /// <returns></returns>
     [HttpPost]
     [Route("create-role")]
     public async Task<IActionResult> CreateRole(string roleName)
@@ -212,6 +217,39 @@ namespace API.Catalogo.Controllers
       }
       return StatusCode(StatusCodes.Status400BadRequest, 
         new ResponseDto { Status = "Error", Message = "Role already exist" });
+    }
+
+    /// <summary>
+    /// Adiciona role para usuário
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="roleName"></param>
+    /// <returns></returns>
+    [HttpPost]
+    [Route("add-user-to-role")]
+    public async Task<IActionResult> AddUserToRole(string email, string roleName)
+    {
+      var user = await _userManager.FindByEmailAsync(email);
+
+      if(user != null)
+      {
+        var result = await _userManager.AddToRoleAsync(user, roleName); //Identity: AspNetUserRoles
+
+        if(result.Succeeded)
+        {
+          _logger.LogInformation(1, $"User {user.Email} added to the {roleName} role");
+
+          return StatusCode(StatusCodes.Status200OK,
+            new ResponseDto { Status = "Success", Message = $"User {user.Email} added to the {roleName} role" });
+        }
+
+        _logger.LogInformation(1, $"Error: Unable to add user {user.Email} to the {roleName} role");
+
+        return StatusCode(StatusCodes.Status400BadRequest,
+            new ResponseDto { Status = "Error", Message = $"Error: Unable to add user {user.Email} to the {roleName} role" });
+      }
+
+      return BadRequest(new { error = "Unable to find user" });
     }
   }
 }
