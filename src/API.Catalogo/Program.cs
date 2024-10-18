@@ -87,6 +87,17 @@ builder.Services.AddAuthentication(options => //Configura a aplicação para utili
   };
 });
 
+builder.Services.AddAuthorization(options =>
+{
+  //Cria política de autorização com nome "AdminOnly" que pode ser aplicada nos controllers, nas actions ou em toda aplicação
+  options.AddPolicy("AdminOnly", policy => policy.RequireRole("admin")); //Para ter acesso a política AdminOnly o usuário deve ter a role admin
+  options.AddPolicy("SuperAdminOnly", policy => policy.RequireRole("admin").RequireClaim("id", "tmansur"));
+  options.AddPolicy("UserOnly", policy => policy.RequireRole("user"));
+  options.AddPolicy("ExclusiveOnly", policy => policy.RequireAssertion(context => 
+    (context.User.HasClaim(claim => claim.Type == "id" && claim.Value == "tmansur") || 
+    context.User.IsInRole("super-admin"))));
+});
+
 builder.Services.AddScoped<ApiLoggingFilter>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRespository>();
