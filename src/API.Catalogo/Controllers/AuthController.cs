@@ -17,16 +17,19 @@ namespace API.Catalogo.Controllers
     private readonly UserManager<ApplicationUser> _userManager; //Administração de usuários no Identity
     private readonly RoleManager<IdentityRole> _roleManager; //Administração de roles no Identity
     private readonly IConfiguration _configuration;
+    private readonly ILogger<AuthController> _logger;
 
-    public AuthController(ITokenService tokenService, 
-                          UserManager<ApplicationUser> userManager, 
-                          RoleManager<IdentityRole> roleManager, 
-                          IConfiguration configuration)
+    public AuthController(ITokenService tokenService,
+                          UserManager<ApplicationUser> userManager,
+                          RoleManager<IdentityRole> roleManager,
+                          IConfiguration configuration,
+                          ILogger<AuthController> logger)
     {
       _tokenService = tokenService;
       _userManager = userManager;
       _roleManager = roleManager;
       _configuration = configuration;
+      _logger = logger;
     }
 
     /// <summary>
@@ -182,6 +185,33 @@ namespace API.Catalogo.Controllers
       await _userManager.UpdateAsync(user);
 
       return NoContent();
+    }
+
+    [HttpPost]
+    [Route("create-role")]
+    public async Task<IActionResult> CreateRole(string roleName)
+    {
+      var roleExist = await _roleManager.RoleExistsAsync(roleName);
+
+      if(!roleExist)
+      {
+        var roleResult = await _roleManager.CreateAsync(new IdentityRole(roleName)); //Criar a role na tabela AspNetRoles
+
+        if(roleResult.Succeeded)
+        {
+          _logger.LogInformation(1, "Roles Added");
+
+          return StatusCode(StatusCodes.Status200OK, 
+            new ResponseDto { Status = "Success", Message = $"Role {roleName} added successfully" });
+        }
+
+        _logger.LogInformation(2, "Error");
+
+        return StatusCode(StatusCodes.Status400BadRequest, 
+          new ResponseDto { Status = "Error", Message = $"Issue adding the new {roleName} role" });
+      }
+      return StatusCode(StatusCodes.Status400BadRequest, 
+        new ResponseDto { Status = "Error", Message = "Role already exist" });
     }
   }
 }
