@@ -51,7 +51,7 @@ namespace API.Catalogo.Controllers
         {
           new(ClaimTypes.Name, user.UserName!),
           new(ClaimTypes.Email, user.Email!),
-          new("id", user.UserName!)
+          new("id", user.UserName!),
           new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
