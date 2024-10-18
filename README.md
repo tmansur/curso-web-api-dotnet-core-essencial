@@ -459,7 +459,7 @@ Filtragem por rota (route filtering)
 
 ---------------------------------------------------------------------
 
-## Segurança: Autenticação, Autorização e Token JWT
+## Segurança: Autenticação, Autorização, Token JWT, CORS e Rate Limiting
 
 Autenticação: verifica se o usuário pode acessar o sistema/API.
 
@@ -478,3 +478,38 @@ Identity - :
   - AspNetRoleClaims
 
 
+### CORS - Cross-Origin Resource Sharing
+
+É uma política de segurança (Política de Mesma Origem) implementada pelos navegadores web para proteger os usuários contra requisições maliciosas de origens diferentes.
+
+A Política de Mesma Origem (Same-Origen Policy) é uma regra que impede que scripts em uma página web façam requisições para uma origem diferente daquela que utilizada pela página.
+
+Origem = Esquema + Domínio + Porta
+- Esquema: **http** ou **https**
+- Domínio: nome do **host** (www.exemplo-host.com)
+- Porta: porta onde o recurso é disponibilizado.
+
+
+> [!TIP]
+> Site para fazer request de origem diferente: https://apirequest.io/
+
+Formas de habilitar o CORS para permitir acesso de outra origem:
+- Middleware 
+  - Política nomeada: .AddPolicy
+  - Política padrão: .AddDefaultPolicy
+- Roteamento de endpoint
+- Atributo [EnableCors]
+
+Opções de configurações para política CORS:
+- Definir as **origens** permitidas
+  - AllowAnyOrigin()
+  - WithOrigins("http://www.exemplo.com", "http://www.outro-exemplo.com")
+- Definir os **métodos HTTP** permitidos
+  - WithOrigins("http://www.exemplo.com").AllowAnyMethod()
+  - WithOrigins("http://www.exemplo.com").WithMethods("GET", "POST")
+- Definir os **cabeçalhos HTTP** permitidos
+  - WithOrigins("http://www.exemplo.com").AllowAnyHeader()
+  - WithOrigins("http://www.exemplo.com").WithHeaders("HeadersName.ContentType", "x-meu-header")
+- Permitir o envio de **credenciais** entre origens: 
+  - Definir no client o atributo **XMLHttpRequest.withCredential** como **true**
+  - WithOrigins("http://www.exemplo.com").AllowCredentiais()
