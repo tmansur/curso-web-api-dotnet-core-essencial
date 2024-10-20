@@ -8,11 +8,13 @@ using API.Catalogo.Repositories;
 using API.Catalogo.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -119,6 +121,35 @@ builder.Services.AddAuthorization(options =>
     context.User.IsInRole("super-admin"))));
 });
 
+builder.Services.AddRateLimiter(rateLimiterOptions =>
+{
+  rateLimiterOptions.AddFixedWindowLimiter("fixedWindow", options =>
+  {
+    options.PermitLimit = 1; //Quantidade de requisições permitidas durante a janela de tempo especificado
+    options.Window = TimeSpan.FromSeconds(5); //Duração da janela de tempo    
+    options.QueueLimit = 2; //Número máximo de requisições que podem ser enfileiradas 
+    options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst; //Ordem de processamento das requisições que estão na fila de espera
+  });
+  rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
+
+//Configurando limitação global, com isso não é necessário marcar os controllers/endpoints com [EnableRateLimiting]
+//builder.Services.AddRateLimiter(options =>
+//{
+//  options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext => 
+//    RateLimitPartition.GetFixedWindowLimiter(
+//      partitionKey: httpContext.User.Identity?.Name ?? httpContext.Request.Headers.Host.ToString(),
+//      factory: partition => new FixedWindowRateLimiterOptions
+//      {
+//        AutoReplenishment = true,
+//        PermitLimit = 2,
+//        QueueLimit = 0,
+//        Window = TimeSpan.FromSeconds(5)
+//      }
+//    ));
+//  options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+//});
+
 builder.Services.AddScoped<ApiLoggingFilter>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRespository>();
@@ -147,6 +178,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseRateLimiter();
 //app.UseCors(origensComAcessoPermitido);
 app.UseCors();
 app.UseAuthorization(); //Middleware responsável pelo processo de autorização

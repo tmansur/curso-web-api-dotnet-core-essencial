@@ -6,12 +6,14 @@ using API.Catalogo.Pagination;
 using API.Catalogo.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Newtonsoft.Json;
 
 namespace API.Catalogo.Controllers
 {
   [ApiController]
   [Route("api/[controller]")]
+  [EnableRateLimiting("fixedWindow")] //Aplica a limitação de taxa a todos endpoints
   public class CategoriasController : ControllerBase
   {
     private readonly IUnitOfWork _unitOfWork;
@@ -69,6 +71,7 @@ namespace API.Catalogo.Controllers
 
     [HttpGet] // rota: api/categorias
     [ServiceFilter(typeof(ApiLoggingFilter))] //Filtro personalizado
+    [DisableRateLimiting] //Desabilita a aplicação do rate limite configurado no controller
     public async Task<ActionResult<IEnumerable<CategoriaDto>>> GetAsync()
     {
       _logger.LogInformation("================ GET api/categoria ================");
