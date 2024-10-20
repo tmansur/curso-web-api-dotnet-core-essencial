@@ -7,6 +7,7 @@ using API.Catalogo.Models;
 using API.Catalogo.RateLimitOptions;
 using API.Catalogo.Repositories;
 using API.Catalogo.Services;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
@@ -52,7 +53,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-  c.SwaggerDoc("v1", new OpenApiInfo { Title = "API Catalogo", Version = "v1" });
+  c.SwaggerDoc("v1", new OpenApiInfo { Title = "API Catalogo - V1", Version = "v1" });
+  c.SwaggerDoc("v2", new OpenApiInfo { Title = "API Catalogo - V2", Version = "v2" });
   c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
   {
     Name = "Authorization", //Nome do cabeçalho onde o token é enviado
@@ -153,6 +155,19 @@ builder.Services.AddRateLimiter(rateLimiterOptions =>
 //  options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 //});
 
+//Configura versionamento da API
+builder.Services.AddApiVersioning(options =>
+{
+  options.DefaultApiVersion = new ApiVersion(1, 0); //Define a versão padrão da API
+  options.AssumeDefaultVersionWhenUnspecified = true; //Usa a versão default da API, definda em DefaultApiVersion, se o cliente não fornecer uma versão explicitamente na requisição
+  options.ReportApiVersions = true; //Permite informar via headers as versões de API suportadas. Atributos api-supported-versions e api-deprecated-version
+  options.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader()); //define o versionamento por URL (o valor padrão é QueryStringApiVersionReader)
+}).AddApiExplorer(options => //Utilizado para configurar as rotas dos endpoints no Swagger para incluir o versionamento
+{
+  options.GroupNameFormat = "'v'VVV";
+  options.SubstituteApiVersionInUrl = true;
+});
+
 builder.Services.AddScoped<ApiLoggingFilter>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRespository>();
@@ -176,7 +191,19 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
   app.UseSwagger(); //Middleware do swagger
-  app.UseSwaggerUI(); //Middleware de interface do swagger
+  //Middleware de interface do swagger
+  app.UseSwaggerUI(options =>
+  {
+    // Configurar os endpoints de cada versão
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+    options.SwaggerEndpoint("/swagger/v2/swagger.json", "API V2");
+
+    //// Definir o Swagger UI para carregar a última versão como padrão (opcional)
+    //options.DefaultModelExpandDepth(2);
+    //options.DefaultModelRendering(Swashbuckle.AspNetCore.SwaggerUI.ModelRendering.Model);
+    //options.DisplayRequestDuration();
+    //options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None); // Configura como as docs aparecem
+  }); 
   app.ConfigureExceptionHandler();
 }
 

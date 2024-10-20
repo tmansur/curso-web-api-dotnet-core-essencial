@@ -555,4 +555,23 @@ Exemplo:
 - `[EnableRateLimiting("nome")]`
 - `[DisableRateLimiting]`
 
+---------------------------------------------------------------------
 
+## Versionamento de API
+
+Versionamento de software normalmente seguem o padrão **Major**.**Minor**.**Patch**:
+- **Major** (Principal): aumenta quando são feitas alterações significativas, pode quebrar compatibilidade com versões anteriores (breaking change);
+- **Minor** (Menor): aumenta quando são feitas adições de funcionalidades menores ou melhorias, geralmente não quebram a compatibilidade com versões anteriores;
+- **Patch**: aumenta quando liberada correção de bugs ou pequenas melhorias que não afetam a compatibilidade com versões anteriores.
+
+Versionamento de API tem como objetivo designar uma versão específica da API para garantir a compatibilidade entre clientes e servidores, mesmo quando mudanças são feitas na API.
+
+Abordagens possíveis para versionamento de API:
+- **Querystring** - Inclui a versão como parâmetro de consulta na URL. Exemplo: https://api.exemplo.com/resource?**version=1**
+- **URI** - Inclui a versão diretamente na URL da API. Exemplo: https://api.exemplo.com/**v1**/resource
+- **Headers** - Especifica a versão desejada no cabeçalho da requisição HTTP. Exemplo: **X-API-Version: 1** 
+- **Media Type** - Usar diferentes tipos de mídia para representar versões diferentes da API. Exemplo: **Accept: application/vnd.exemplo.v1+json**
+
+Libs necessárias para configuração do versionamento:
+- `Asp.Versioning.Mvc.ApiExplorer`
+- `Asp.Versioning.Http`

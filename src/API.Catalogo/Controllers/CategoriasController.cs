@@ -4,6 +4,7 @@ using API.Catalogo.Filters;
 using API.Catalogo.Models;
 using API.Catalogo.Pagination;
 using API.Catalogo.Repositories;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -12,8 +13,9 @@ using Newtonsoft.Json;
 namespace API.Catalogo.Controllers
 {
   [ApiController]
-  [Route("api/[controller]")]
-  [EnableRateLimiting("fixedWindow")] //Aplica a limitação de taxa a todos endpoints
+  [Route("api/v{version:apiVersion}/[controller]")]
+  [ApiVersion("1.0")]
+  [EnableRateLimiting("fixedWindow")] //Aplica a limitação de taxa a todos endpoints  
   public class CategoriasController : ControllerBase
   {
     private readonly IUnitOfWork _unitOfWork;

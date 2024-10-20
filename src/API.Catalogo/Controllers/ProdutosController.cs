@@ -2,6 +2,7 @@
 using API.Catalogo.Models;
 using API.Catalogo.Pagination;
 using API.Catalogo.Repositories;
+using Asp.Versioning;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -11,7 +12,8 @@ using Newtonsoft.Json;
 namespace API.Catalogo.Controllers
 {
   [ApiController]
-  [Route("api/[controller]")]
+  [Route("api/v{version:apiVersion}/[controller]")]
+  [ApiVersion("1.0")]
   public class ProdutosController : ControllerBase
   {
     private readonly IUnitOfWork _unitOfWork;

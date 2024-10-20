@@ -1,6 +1,7 @@
 ﻿using API.Catalogo.DTOs;
 using API.Catalogo.Models;
 using API.Catalogo.Services;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,9 +9,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace API.Catalogo.Controllers
-{
-  [Route("api/[controller]")]
+{  
   [ApiController]
+  [Route("api/v{version:apiVersion}/[controller]")]
+  [ApiVersion("1.0")]
   public class AuthController : ControllerBase
   {
     private readonly ITokenService _tokenService;
