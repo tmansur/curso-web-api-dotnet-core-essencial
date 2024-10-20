@@ -513,3 +513,46 @@ Opções de configurações para política CORS:
 - Permitir o envio de **credenciais** entre origens: 
   - Definir no client o atributo **XMLHttpRequest.withCredential** como **true**
   - WithOrigins("http://www.exemplo.com").AllowCredentiais()
+
+### Rate Limiting
+
+Limitar o número de requisições que podem ser feitas em um período de tempo.
+
+### Configuração
+
+1-Baixar a lib `Microsfot.AspNetCore.RateLimiting`
+
+2-Registrar o serviço:
+~~~CSharp
+//promgram.cs
+
+builder.Service.AddRateLimiter(rateLimiterOptions => 
+{
+  //Definir algoritmo de limitação de taxa
+  rateLimiterOptions.<algoritmo-limitacao>("nome", options => 
+  {
+    //Configurações
+  });
+});
+~~~
+
+Algoritmos de limitação:
+
+- Limitador de janela fixa: `AddFixedWindowLimiter`
+- Limitador de janela deslizante: `AddSlidingWindowLimiter`
+- Limitador de balde/cesta de Token: `AddTokenBucketLimiter`
+- Limitador de simultaneidade/concorrência: `AddConcurrencyLimiter`
+
+3-Adicionar o middleware ao pipeline de requisições (após o `app.Routing()`):
+~~~Csharp
+//program.cs
+app.UseRateLimiter();
+~~~
+
+4-Usar os atributos **EnableRateLimiting** e **DisableRateLimiting** nos controladores.
+
+Exemplo:
+- `[EnableRateLimiting("nome")]`
+- `[DisableRateLimiting]`
+
+

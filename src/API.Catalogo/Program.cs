@@ -4,6 +4,7 @@ using API.Catalogo.Extensions;
 using API.Catalogo.Filters;
 using API.Catalogo.Logging;
 using API.Catalogo.Models;
+using API.Catalogo.RateLimitOptions;
 using API.Catalogo.Repositories;
 using API.Catalogo.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -121,30 +122,32 @@ builder.Services.AddAuthorization(options =>
     context.User.IsInRole("super-admin"))));
 });
 
+var myRateLimitOptions = new MyRateLimitOptions();
+builder.Configuration.GetSection(MyRateLimitOptions.MyRateLimit).Bind(myRateLimitOptions); //Associa os valores obtidos da seção MyRateLimit do arquivo appsettings.json com a instância da classe MyRateLimitOptions
 builder.Services.AddRateLimiter(rateLimiterOptions =>
 {
   rateLimiterOptions.AddFixedWindowLimiter("fixedWindow", options =>
   {
-    options.PermitLimit = 1; //Quantidade de requisições permitidas durante a janela de tempo especificado
-    options.Window = TimeSpan.FromSeconds(5); //Duração da janela de tempo    
-    options.QueueLimit = 2; //Número máximo de requisições que podem ser enfileiradas 
+    options.PermitLimit = myRateLimitOptions.PermitLimit; //Quantidade de requisições permitidas durante a janela de tempo especificado
+    options.Window = TimeSpan.FromSeconds(myRateLimitOptions.Window); //Duração da janela de tempo    
+    options.QueueLimit = myRateLimitOptions.QueueLimit; //Número máximo de requisições que podem ser enfileiradas 
     options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst; //Ordem de processamento das requisições que estão na fila de espera
   });
   rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });
 
-//Configurando limitação global, com isso não é necessário marcar os controllers/endpoints com [EnableRateLimiting]
+////Configurando limitação global, com isso não é necessário marcar os controllers/endpoints com [EnableRateLimiting]
 //builder.Services.AddRateLimiter(options =>
 //{
-//  options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext => 
+//  options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
 //    RateLimitPartition.GetFixedWindowLimiter(
 //      partitionKey: httpContext.User.Identity?.Name ?? httpContext.Request.Headers.Host.ToString(),
 //      factory: partition => new FixedWindowRateLimiterOptions
 //      {
-//        AutoReplenishment = true,
-//        PermitLimit = 2,
-//        QueueLimit = 0,
-//        Window = TimeSpan.FromSeconds(5)
+//        AutoReplenishment = myRateLimitOptions.AutoReplenishment,
+//        PermitLimit = myRateLimitOptions.PermitLimit,
+//        QueueLimit = myRateLimitOptions.QueueLimit,
+//        Window = TimeSpan.FromSeconds(myRateLimitOptions.Window)
 //      }
 //    ));
 //  options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
