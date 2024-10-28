@@ -25,6 +25,11 @@ namespace API.Catalogo.Controllers
       _mapper = mapper;
     }
 
+    /// <summary>
+    /// Obtem produto pelo seu identificador
+    /// </summary>
+    /// <param name="id">Identificador do produto</param>
+    /// <returns>Objeto produto</returns>
     [HttpGet("categoria/{id}")]
     public async Task<ActionResult<IEnumerable<ProdutoDto>>> GetProdutosCategoria(int id)
     {
@@ -36,6 +41,10 @@ namespace API.Catalogo.Controllers
       return Ok(produtosDto);
     }
 
+    /// <summary>
+    /// Obtém lista de produtos
+    /// </summary>
+    /// <returns>Retorna lista de objeto do tipo Produto</returns>
     // rota: api/produtos
     [HttpGet]
     [Authorize(Policy = "UserOnly")]

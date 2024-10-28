@@ -71,6 +71,10 @@ namespace API.Catalogo.Controllers
       return Ok(categoriasDto);
     }
 
+    /// <summary>
+    /// Obtem lista de objetos Categoria
+    /// </summary>
+    /// <returns>Lista de objetos do tipo Categoria</returns>
     [HttpGet] // rota: api/categorias
     [ServiceFilter(typeof(ApiLoggingFilter))] //Filtro personalizado
     [DisableRateLimiting] //Desabilita a aplicação do rate limite configurado no controller
@@ -84,6 +88,11 @@ namespace API.Catalogo.Controllers
       return Ok(categoriasDto);
     }
 
+    /// <summary>
+    /// Obtem uma Categoria pelo seu Id
+    /// </summary>
+    /// <param name="id">Id da categoria</param>
+    /// <returns>Objeto do tipo categoria</returns>
     [HttpGet("{id:int}", Name = "ObterCategoria")]
     public async Task<ActionResult<CategoriaDto>> GetAsync(int id)
     {
@@ -98,6 +107,22 @@ namespace API.Catalogo.Controllers
       return Ok(categoriaDto);
     }
 
+    /// <summary>
+    /// Inclui uma nova categoria
+    /// </summary>
+    /// <remarks>
+    /// Exemplo de request:
+    /// 
+    ///   POST api/categorias
+    ///   {
+    ///     "categoriaId": 1,
+    ///     "nome": "categoria1",
+    ///     "imagemUrl": "http://teste.com.br/imagem1.jpg"
+    ///   }
+    /// </remarks>
+    /// <param name="categoriaDto">Objeto Categoria</param>
+    /// <returns>O objeto do tipo categoria que foi incluido</returns>
+    /// <remarks>Retorna um objeto categoria cadastro a partir do dto enviado</remarks>
     [HttpPost]
     public async Task<ActionResult<CategoriaDto>> PostAsync(CategoriaDto categoriaDto)
     {

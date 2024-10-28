@@ -575,3 +575,30 @@ Abordagens possíveis para versionamento de API:
 Libs necessárias para configuração do versionamento:
 - `Asp.Versioning.Mvc.ApiExplorer`
 - `Asp.Versioning.Http`
+
+---------------------------------------------------------------------
+
+## Documentação: Swagger, convenções e analisadores
+
+### Swagger
+
+OpenAPI: projeto composto por ferramentas que ajudam a modelar a API, gerar documentação da API e gerar código do cliente e do servidor.
+
+Swagger: framework que automatiza a documentação de uma API. Com ele é possível modelar, descrever, consumir e visualizar uma API Rest.
+
+Para utilizar o swagger com .NET:
+- Instalar o pacote `Swashbuckle.AspNetCore`
+- Adicionar e configurar o middleware: `builder.Service.AddSwaggerGen`
+- Habilitar o middleware para atender o JSON gerado: `app.UseSwagger()` e `app.UseSwaggerUI()`
+
+Habilitar e exibir comentários XML na documentação:
+- Incluir no a opção `<GenerateDocumentationFile>True</GenerateDocumentationFile>` no arquivo .csproj em `<PropertyGroup>`
+- Configurar o Swagger para usar o arquivo XML que contém os comentários:
+~~~Csharp
+builder.Service.AddSwaggerGen(options => 
+{
+  ....
+  var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"; //Cria um nome de arquivo XML correspondente ao projeto via Reflection
+  options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName)); //Add os comentários ao swagger
+})
+~~~
