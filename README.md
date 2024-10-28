@@ -602,3 +602,7 @@ builder.Service.AddSwaggerGen(options =>
   options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName)); //Add os comentários ao swagger
 })
 ~~~
+
+> [!WARNING]
+> Habilitar a exibição de comentários XML irá gerar um warning CS1591 em toda classe que existir método sem comentário. Para disabilitar esse warning basta incluir a tag `<NoWarn>$(NoWarn);1591</NoWarn>` no atributo `<PropertyGroup>` do arquivo **.csproj**.
+
