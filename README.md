@@ -632,3 +632,9 @@ public class ProdutosController : ControllerBase
   ...
 }
 ~~~
+
+### Analisadores
+
+Ferramenta que ajuda a verificar a qualidade do código das Web Apis.
+
+Para ativar basta incluir `<IncludeOpenApiAnalyzers>true</IncludeOpenApiAnalyzers>` no atributo `<PropertyGroup>` no arquivo **.csproj**. 
