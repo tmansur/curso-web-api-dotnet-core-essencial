@@ -13,6 +13,7 @@ namespace API.Catalogo.Controllers
   [ApiController]
   [Route("api/v{version:apiVersion}/[controller]")]
   [ApiVersion("1.0")]
+  [ApiConventionType(typeof(DefaultApiConventions))]
   public class AuthController : ControllerBase
   {
     private readonly ITokenService _tokenService;

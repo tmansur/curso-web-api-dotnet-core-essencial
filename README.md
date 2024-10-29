@@ -606,3 +606,29 @@ builder.Service.AddSwaggerGen(options =>
 > [!WARNING]
 > Habilitar a exibição de comentários XML irá gerar um warning CS1591 em toda classe que existir método sem comentário. Para disabilitar esse warning basta incluir a tag `<NoWarn>$(NoWarn);1591</NoWarn>` no atributo `<PropertyGroup>` do arquivo **.csproj**.
 
+
+### Convensões
+
+Convenções padrões da Web API estão disponíveis no namespace `Microsoft.AspNetCore.Mvc.DefaultApiConventions` e são importantes para padronizar a criação e documentação de APIs.
+
+`ApiConventionMethod` --> aplicado em métodos Action, especifica o tipo de convenção e o método a que se aplica.
+~~~Csharp
+[HttpPut("id")]
+[ApiConventionMethod(typeOf(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
+public async Task<ActionResul<CategoriaDto>> Put(int id, CategoriaDto categoriaDto)
+{
+  ...
+  return Ok(categoriaAtualizadaDto);
+}
+~~~
+
+`ApiConvetionType` --> aplica as convenções padrões a todos os métodos do controller.
+~~~Csharp
+[Route("[controller]")]
+[ApiController]
+[ApiConventionTupe(typeof(DefaultApiConventions))]
+public class ProdutosController : ControllerBase
+{
+  ...
+}
+~~~

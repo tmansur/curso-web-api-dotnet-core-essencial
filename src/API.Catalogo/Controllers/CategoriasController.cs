@@ -16,6 +16,7 @@ namespace API.Catalogo.Controllers
   [Route("api/v{version:apiVersion}/[controller]")]
   [ApiVersion("1.0")]
   [EnableRateLimiting("fixedWindow")] //Aplica a limitação de taxa a todos endpoints  
+  [ApiConventionType(typeof(DefaultApiConventions))] //Aplica as convenções de WebApi a todos os endpoints do controller
   public class CategoriasController : ControllerBase
   {
     private readonly IUnitOfWork _unitOfWork;
