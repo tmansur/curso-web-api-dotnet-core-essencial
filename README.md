@@ -667,3 +667,28 @@ Solução com 5 projetos distintos:
 > Tipos de projeto:
 > - Catalogo.API - ASPNET Core Web API
 > - Demais projetos - Class Library
+
+### 
+
+Ao executar o comando  `dotnet ef migrations add CriaTabelasCategoriaProduto` (a partir do projeto Catalogo.Infrastructure que é onde está o Entity Framework Core) está gerando o seguinte erro:
+
+> Unable to create a 'DbContext' of type ''. The exception 'Unable to resolve service for type 'Microsoft.EntityFrameworkCore.DbContextOptions`1[Catalogo.Infrastructure.Context.ApplicationDbContext]' while attempting to activate 'Catalogo.Infrastructure.Context.ApplicationDbContext'.' was thrown while attempting to create an instance. For the different patterns supported at design time, see https://go.microsoft.com/fwlink/?linkid=851728
+
+Para solucionar o problema basta alterar, no projeto Infrastructure, o código conforme abaixo:
+
+<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
+  <PrivateAssets>**none**</PrivateAssets>
+  ...
+</PackageReference>
+
+E executar o comando de migrations da seguinte maneira a partir da pasta onde está a solution:
+
+`dotnet ef migrations add CriaTabelasCategoriaProduto --project Catalogo.Infrastructure -s Catalogo.API -c ApplicationDbContext` e `dotnet ef database update --project Catalogo.Infrastructure -s Catalogo.API -c ApplicationDbContext`, onde:
+
+- **--project Catalogo.Infrastructure**: especifica onde a migração será criada, direcionando para o projeto Catalogo.Infrastructure.
+- **-s Catalogo.API**: indica o projeto de inicialização, que é o projeto executado quando o comando é aplicado, aqui, o Catalogo.API. Isso é útil porque as configurações do contexto (como string de conexão) são encontradas nesse projeto.
+- **-c ApplicationDbContext**: define o DbContext específico que o Entity Framework Core usará ao gerar a migração. Isso é essencial caso existam vários contextos no projeto.
+
+
+
+
