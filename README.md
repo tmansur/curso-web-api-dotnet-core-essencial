@@ -638,3 +638,32 @@ public class ProdutosController : ControllerBase
 Ferramenta que ajuda a verificar a qualidade do código das Web Apis.
 
 Para ativar basta incluir `<IncludeOpenApiAnalyzers>true</IncludeOpenApiAnalyzers>` no atributo `<PropertyGroup>` no arquivo **.csproj**. 
+
+---------------------------------------------------------------------
+
+## Clean Architecture
+
+![image](https://github.com/user-attachments/assets/c9af481f-0ac9-48a6-8b1c-bf2cf7f38948)
+
+Solução com 5 projetos distintos:
+- **Catalogo.Domain**: modelo de domínio, interfaces, regras de negócio;
+  - Entities
+  - Interfaces 
+- **Catalogo.Application**: regras da aplicação, serviços, mapeamentos, DTOs;
+  - Dtos
+  - Interfaces
+  - Mappings
+  - Services   
+- **Catalogo.Infrastructure**: lógicade acesso a dados, contexto, configurações, ORM;
+  - Context
+  - EntitiesConfiguration
+  - Repositories 
+- **Catalogo.CrossCutting**: IoC, registro dos serviços e recursos, DI;
+  - IoC   
+- **Catalogo.API**: controllers, endpoints, filtros.
+  - Controllers 
+
+> [!NOTE]
+> Tipos de projeto:
+> - Catalogo.API - ASPNET Core Web API
+> - Demais projetos - Class Library
