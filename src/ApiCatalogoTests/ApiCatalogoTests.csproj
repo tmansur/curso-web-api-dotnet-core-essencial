@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\API.Catalogo\API.Catalogo.csproj" />
+    <ProjectReference Include="..\API.Catalogo.Monolito\API.Catalogo.Monolito.csproj" />
   </ItemGroup>
 
   <ItemGroup>
