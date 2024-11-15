@@ -676,10 +676,12 @@ Ao executar o comando  `dotnet ef migrations add CriaTabelasCategoriaProduto` (a
 
 Para solucionar o problema basta alterar, no projeto Infrastructure, o código conforme abaixo:
 
+~~~
 <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
   <PrivateAssets>**none**</PrivateAssets>
   ...
 </PackageReference>
+~~~
 
 E executar o comando de migrations da seguinte maneira a partir da pasta onde está a solution:
 
