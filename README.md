@@ -668,7 +668,7 @@ Solução com 5 projetos distintos:
 > - Catalogo.API - ASPNET Core Web API
 > - Demais projetos - Class Library
 
-### 
+### Executando migrations em uma arquitetura limpa
 
 Ao executar o comando  `dotnet ef migrations add CriaTabelasCategoriaProduto` (a partir do projeto Catalogo.Infrastructure que é onde está o Entity Framework Core) está gerando o seguinte erro:
 
@@ -692,5 +692,90 @@ E executar o comando de migrations da seguinte maneira a partir da pasta onde es
 - **-c ApplicationDbContext**: define o DbContext específico que o Entity Framework Core usará ao gerar a migração. Isso é essencial caso existam vários contextos no projeto.
 
 
+---------------------------------------------------------------------
 
+## Consumindo a API
 
+### HttpClientFactory
+
+- Fornece um local central para configurar HttpClients lógico.
+- Gerencia o tempo de vida dos handlers e rotaciona para que o DNS não fique obsoleto.
+
+> [!CAUTION]
+> - Não é recomendado o uso direto da classe **HttpClient** em uma instrução using pois, mesmo sendo uma classe **Disposable**, o soquete subjacente não é liberado imediatamente ao realizar um dispose, o que pode causar um problema conhecido como **esgotamento de soquetes**.
+> - Usar o **HttpClient** como um objeto **singleton** ou **estático** pode gerar um problema caso o DNS seja alterado.
+> Para evitar os problemas anteriores utilizamos a Interface IHttpClientFactory e suas implementações.
+
+Maneiras de utilizar o HttpClientFactory:
+- Uso básico
+- Clientes nomeados
+- Clientes tipados
+- Clientes gerados
+
+Pacote: **Microsoft.Extensions.Http**
+
+#### Uso básico
+
+Define o HttpFactory no momento do uso do client.
+
+1º) Registrar o serviço no program.cs:
+
+~~~
+builder.Service.AddHttpClient();
+~~~
+
+2º) Injetar a instância de IHttpClientFactory onde desejar usar:
+
+~~~
+public class SeuController
+{
+  private readonly IHttpClientFactory _clientFactory;
+  public SeuController(IHttpClientFactory clientFactory)
+  {
+    _clientFactory = clientFactory
+  }
+  
+  public async Task SeuMetodo()
+  {
+    var client = _clientFactory.CreateClient();
+    ...
+  }
+}
+~~~
+
+#### Client nomeado
+
+Permite criar clients lógicos definidos para acessar uma determinada API.
+
+1º) Registrar o serviço no program.cs:
+
+~~~
+
+builder.Services.AddHttpClient("NomeCliente", httpClient => 
+{
+  httpClient.BaseAddress = new Uri("Https://localhost:3000")
+  //Outras configurações
+});
+
+~~~
+
+2º) Injetar a instância de IHttpClientFactory onde desejar usar:
+
+~~~
+public class SeuController
+{
+  private readonly IHttpClientFactory _clientFactory;
+  public SeuController(IHttpClientFactory clientFactory)
+  {
+    _clientFactory = clientFactory
+  }
+  
+  public async Task SeuMetodo()
+  {
+    var client = _clientFactory.CreateClient("NomeClient");
+    ...
+  }
+}
+~~~
+
+#### Client tipado
