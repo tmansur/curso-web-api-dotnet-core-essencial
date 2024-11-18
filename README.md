@@ -781,3 +781,27 @@ public class SeuController
 ~~~
 
 #### Client tipado
+
+Pesquisar sobre...
+
+### GraphQL
+
+Linguagem de consulta a API criada pelo Facebook que oferece um modelo de dados mais eficiente e flexível. 
+
+É uma camada intermediária entre o cliente e o servidor, que recebe uma solicitação do cliente para retornar um conjunto de dados específico, reduzindo assim a largura de banda utilizada.
+
+Exemplo de chamada utilizando GraphQL para retornar informações de um autor, seus livros e as resenhas dos livros:
+
+~~~
+{
+  autor {
+    nome
+    livros {
+      titulo
+      resenhas {
+        comentarios
+      }
+    }
+  }
+}
+~~~
