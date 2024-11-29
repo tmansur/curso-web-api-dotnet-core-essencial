@@ -791,6 +791,7 @@ Linguagem de consulta a API criada pelo Facebook que oferece um modelo de dados 
 É uma camada intermediária entre o cliente e o servidor, que recebe uma solicitação do cliente para retornar um conjunto de dados específico, reduzindo assim a largura de banda utilizada.
 
 Exemplo de chamada utilizando GraphQL para retornar informações de um autor, seus livros e as resenhas dos livros:
+- /graphql
 
 ~~~
 {
@@ -805,3 +806,26 @@ Exemplo de chamada utilizando GraphQL para retornar informações de um autor, s
   }
 }
 ~~~
+
+Utilizando REST o cliente precisaria fazer chamada a 3 endpoints diferentes e seriam retornadas informações que o cliente não irá utilizar:
+- autor/id
+- autor/livro/{id}
+- autor/livro/{id}/resenha
+
+#### Conceitos básicos
+
+- Schema: descreve as funcionalidades disponíveis para os clientes;
+- Types:
+  - RootQuery: utilizado para realizar operações de leitura;
+  - RootMutation: utilizado para realizar operações de escrita;
+- Query: define o contrato de consulta de dados;
+- Mutation: define o contrato de manipulação de dados;
+- Resolvers: funções responsáveis por resolver um pedido e devolver as informações solicitadas. Essa funções possuem 3 argumentos:
+  - root
+  - arguments
+  - context
+
+#### Bibliotecas
+
+- HotChocolate.AspNetCore
+- HotChocolate.Data.EntityFramework
